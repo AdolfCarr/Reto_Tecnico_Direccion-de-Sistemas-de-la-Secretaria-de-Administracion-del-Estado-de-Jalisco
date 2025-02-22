@@ -1,99 +1,209 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="http://nestjs.com/" target="blank">
+    <img src="https://nestjs.com/img/logo-small.svg" width="60" alt="NestJS Logo" />
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://www.postgresql.org/" target="blank">
+    <img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="60" alt="PostgreSQL Logo" />
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://typeorm.io/" target="blank">
+    <img src="https://avatars.githubusercontent.com/u/20165699?s=200&v=4" width="60" alt="TypeORM Logo" />
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://www.docker.com/" target="blank">
+    <img src="https://raw.githubusercontent.com/docker-library/docs/master/docker/logo.png" width="60" alt="Docker Logo" />
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://docs.docker.com/compose/" target="blank">
+    <img src="https://raw.githubusercontent.com/docker/compose/master/logo.png" width="60" alt="Docker Compose Logo" />
+  </a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Backend API for IIEG Transport Statistics (Dockerized)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+A **NestJS-based** backend for extracting and managing transport statistics data from the **IIEG API**, stored in **PostgreSQL**.
 
-## Description
+## 🚀 Deployment with Docker
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Prerequisites
 
-## Project setup
+- **Docker** & **Docker Compose** installed
+- `git`
 
-```bash
-$ npm install
-```
+### Description
 
-## Compile and run the project
+- **The objective:**
 
-```bash
-# development
-$ npm run start
+  Automate extraction (not manual) of information from the following source via backend: [IIEG API](https://iieg.gob.mx/ns/?page_id=36831), and store it in a SQL-based database (PostgreSQL).
 
-# watch mode
-$ npm run start:dev
+### Project setup
 
-# production mode
-$ npm run start:prod
-```
+The project is **dockerized**, so clone it and run the following command inside the root folder of the project through the command line.
 
-## Run tests
+### Steps
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/AdolfCarr/Reto_Tecnico_Direccion-de-Sistemas-de-la-Secretaria-de-Administracion-del-Estado-de-Jalisco.git
+   cd transporte-stats
+   ``
+
+2. **Run the system with Docker**
+
+Build and start containers:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker-compose up --build
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+3. **Check containers**
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+docker ps -a
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+4. **Access the API**
 
-## Resources
+Access the API through the browser or with curl:
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+http://localhost:4000/data?startYear=2020&transportType=Tren Eléctrico
+```
+or in `cmd`
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+curl http://localhost:4000/data?startYear=2020&transportType=Tren Eléctrico
 
-## Support
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Possible expected data structure:
 
-## Stay in touch
+```json
+[
+  {
+    "id": "665e1214eb09d28a75840855",
+    "year": 2020,
+    "month": 1,
+    "transportType": {
+      "id": 1,
+      "name": "Tren Eléctrico"
+    },
+    "metricType": {
+      "id": 1,
+      "name": "Ingresos por pasaje"
+    },
+    "entity": "Jalisco",
+    "municipality": "Guadalajara",
+    "value": "45270437.00",
+    "status": "Cifras Definitivas"
+  },
+  {
+    "id": "665e1214eb09d28a75840856",
+    "year": 2020,
+    "month": 1,
+    "transportType": {
+      "id": 1,
+      "name": "Tren Eléctrico"
+    },
+    "metricType": {
+      "id": 2,
+      "name": "Kilómetros recorridos"
+    },
+    "entity": "Jalisco",
+    "municipality": "Guadalajara",
+    "value": "508340.00",
+    "status": "Cifras Definitivas"
+  }
+]
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```
 
-## License
+5. **Restart containers if needed**
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```bash
+# Remove old containers and volumes
+docker-compose down -v
+
+# Build and start
+docker-compose up --build
+
+# This will show the logs in real-time.
+docker-compose up --build --force-recreate
+
+# Use the --detach flag to run in the background:
+docker-compose up --build --detach
+
+# Check status
+docker ps -a
+```
+
+### Verification Final Steps
+
+1. **Test API on the browser**
+
+Go to:
+
+```http
+http://localhost:4000/data
+```
+
+2. **Verify data in PostgreSQL**
+
+Access PostgreSQL:
+
+```bash
+# Acceder a PostgreSQL:
+docker exec -it transporte-db psql -U transporte_user -d transporte_db
+```
+Once inside the database, you can check tables and data:
+
+```bash
+# See tables
+\dt
+
+# View data in transport_data
+SELECT * FROM transport_data LIMIT 5;
+
+# View transport types
+SELECT * FROM transport_type;
+
+# View metrics
+SELECT * FROM metric_type;
+
+# Count records in transport_data
+SELECT COUNT(*) FROM transport_data;
+
+```
+
+3. **Monitor logs**
+
+To monitor logs in real-time:
+
+```bash
+docker logs transporte-back --follow
+```
+
+> [!IMPORTANT]
+> *The backend will be operational at* http://localhost:4000
+
+### Common Troubleshooting
+
+1. **Data is not being saved:**
+
+Force the extraction of data when starting the app instead of relying on the cron job. Call fetchAndSaveData() automatically.
+
+Run the following from Docker:
+
+Run from Docker:
+```bash
+docker exec transporte-back node -r ts-node/register scripts/fetch-data.ts
+```
+
+2. **If everything fails**
+
+Restart everything::
+
+```bash
+docker-compose down -v && docker-compose up --build
+```
