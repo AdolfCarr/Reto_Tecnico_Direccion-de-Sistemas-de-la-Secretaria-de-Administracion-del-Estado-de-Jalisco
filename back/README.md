@@ -138,6 +138,21 @@ docker-compose up --build --detach
 docker ps -a
 ```
 
+### Data Extraction
+1. **Manual Execution**
+
+```bash
+docker exec transporte-back node -r ts-node/register src/scripts/fetch-data.ts
+```
+
+2. **Scheduled Execution (Daily 3AM)**
+
+Already configured via:
+
+```typescript
+@Cron('0 3 * * *') // In data-sync.task.ts
+```
+
 ### Verification Final Steps
 
 1. **Test API on the browser**
