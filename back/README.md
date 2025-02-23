@@ -119,6 +119,14 @@ Possible expected data structure:
 
 ```
 
+If recieving an empty Json then see the section `Data Extraction` on this document to resolve.
+
+```bash
+# recieved an empty Json
+[]
+```
+
+
 5. **Restart containers if needed**
 
 ```bash
@@ -206,13 +214,20 @@ docker logs transporte-back --follow
 
 1. **Data is not being saved:**
 
+Receiving an empty JSON when testing the API in the browser
+
+```bash
+# recieved an empty Json
+[]
+```
+
 Force the extraction of data when starting the app instead of relying on the cron job. Call fetchAndSaveData() automatically.
 
 Run the following from Docker:
 
 Run from Docker:
 ```bash
-docker exec transporte-back node -r ts-node/register scripts/fetch-data.ts
+docker exec transporte-back node -r ts-node/register src/scripts/fetch-data.ts
 ```
 
 2. **If everything fails**
