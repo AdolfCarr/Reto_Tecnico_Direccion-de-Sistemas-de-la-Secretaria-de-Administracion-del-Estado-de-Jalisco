@@ -6,9 +6,12 @@ import { HttpModule } from '@nestjs/axios';
 import { TransportData } from './entities/transport-data.entity';
 import { TransportType } from './entities/transport-type.entity';
 import { MetricType } from './entities/metric-type.entity';
+import { User } from './users/user.entity';
 import { DataService } from './data/data.service';
 import { DataController } from './data/data.controller';
 import { DataSyncTask } from './tasks/data-sync.task';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -22,14 +25,16 @@ import { DataSyncTask } from './tasks/data-sync.task';
         username: config.get('DB_USERNAME'),
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
-        entities: [TransportData, TransportType, MetricType],
+        entities: [TransportData, TransportType, MetricType, User],
         synchronize: true,
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([TransportData, TransportType, MetricType]),
+    TypeOrmModule.forFeature([TransportData, TransportType, MetricType, User]),
     ScheduleModule.forRoot(),
     HttpModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [DataController],
   providers: [DataService, DataSyncTask],

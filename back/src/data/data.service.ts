@@ -19,9 +19,12 @@ export class DataService {
     private httpService: HttpService,
   ) {}
 
+  /*
+  Method to fetch and save data from the external 
+  API scheduled by 'data-sync.task.ts' of by the controller by POST
+  */
   async fetchAndSaveData() {
     const { data } = await firstValueFrom(
-      //this.httpService.get('https://iieg.gob.mx/api/transportes'),
       this.httpService.get('http://apiiieg.jalisco.gob.mx/api/etup'),
     );
 
@@ -48,8 +51,7 @@ export class DataService {
           metricType,
           entity: item.Entidad,
           municipality: item.Municipio,
-          //value: item.Valor,
-          value: item.Valor ?? 0.00, // Si es null/undefined, usa 0.00
+          value: item.Valor ?? 0.00,// Si es null/undefined, usa 0.00
           status: item.Estatus,
         });
 
@@ -58,7 +60,21 @@ export class DataService {
     }
   }
 
-  async getFilteredData(startYear?: number, transportType?: string): Promise<TransportData[]> {
+  /*
+  Method to get filtered data:
+
+  When a client makes a GET request to the /data endpoint, the DataController calls 
+  the getFilteredData() method.
+  This method queries the database (which has been populated by data-sync.task.ts) 
+  and returns the filtered data to the client.
+  */
+  async getFilteredData(
+    startYear?: number,
+    endYear?: number,
+    startMonth?: number,
+    endMonth?: number,
+    transportType?: string,
+  ): Promise<TransportData[]> {
     const query = this.transportDataRepo
       .createQueryBuilder('data')
       .leftJoinAndSelect('data.transportType', 'transport')
@@ -66,6 +82,18 @@ export class DataService {
 
     if (startYear) {
       query.andWhere('data.year >= :startYear', { startYear });
+    }
+
+    if (endYear) {
+      query.andWhere('data.year <= :endYear', { endYear });
+    }
+
+    if (startMonth) {
+      query.andWhere('data.month >= :startMonth', { startMonth });
+    }
+
+    if (endMonth) {
+      query.andWhere('data.month <= :endMonth', { endMonth });
     }
 
     if (transportType) {

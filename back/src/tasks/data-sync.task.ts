@@ -5,8 +5,10 @@ import { DataService } from '../data/data.service';
 @Injectable()
 export class DataSyncTask {
   constructor(private dataService: DataService) {}
-
-  @Cron('0 3 * * *') // Ejecutar diario a las 3 AM
+/* Execute each day at 3 AM, This ensures that the 
+database is always up-to-date with the latest data from the source.
+*/  
+@Cron('0 3 * * *') 
   async handleCron() {
     await this.dataService.fetchAndSaveData();
   }
