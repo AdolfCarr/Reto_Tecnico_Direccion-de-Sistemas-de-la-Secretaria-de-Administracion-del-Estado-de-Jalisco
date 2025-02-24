@@ -237,3 +237,245 @@ Restart everything::
 ```bash
 docker-compose down -v && docker-compose up --build
 ```
+
+> [!CAUTION]
+> *The last instructions are for the branch 'backend' on its **commit 231da5f299abfaf095955e050cd215a9ae98abd4**
+
+## Test the final version of the Endpoint on `commit blablabla`
+
+>[!INFORMATION]
+After applying JWT Authantication, the Login and Logout features follow the next instructions to test the endpoints, and database.
+
+1. **Regist A User**
+
+```bash
+
+curl -X POST http://localhost:4000/users/register \
+-H "Content-Type: application/json" \
+-d '{"username": "testuser", "password": "testpassword"}'
+```
+```bash
+# for windows cmd
+curl -X POST http://localhost:4000/users/register -H "Content-Type: application/json" -d "{\"username\": \"testuser\", \"password\": \"testpassword\"}"
+```
+
+Example Response:
+
+```json
+
+{
+  "id": 1,
+  "username": "testuser"
+}
+```
+This creates a user with the username testuser and password testpassword.
+
+2. **Log In to Get a JWT Token**
+
+Now that the user is registered, you can log in to get a JWT token.
+
+Login Command:
+```bash
+curl -X POST http://localhost:4000/auth/login \
+-H "Content-Type: application/json" \
+-d '{"username": "testuser", "password": "testpassword"}'
+```
+
+```bash
+# for windows cmd
+curl -X POST http://localhost:4000/auth/login -H "Content-Type: application/json" -d "{\"username\": \"testuser\", \"password\": \"testpassword\"}"
+```
+
+Example Response:
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+Copy the access_token value. You’ll use it in the next step.
+
+3. **Call the Protected Endpoint**
+Use the access_token to call the protected GET /data endpoint.
+
+Example Command:
+```bash
+curl -X GET "http://localhost:4000/data?startYear=2020&transportType=Autobús" \
+-H "Authorization: Bearer <your_access_token>"
+```
+
+```bash
+# for windows cmd
+curl -X GET "http://localhost:4000/data?startYear=2020&transportType=Autobús" -H "Authorization: Bearer <your_access_token>"
+```
+
+Replace <your_access_token> with the token you obtained in Step 2.
+
+> [!IMPORTANT]
+> Fix for Windows Command Prompt, you need to:
+> 1. Use double quotes (") for the JSON string.
+> 2. Escape the double quotes inside the JSON using a backslash (\).
+
+
+> [!WARNING]
+> JWT tokens are time-limited and will expire after a certain 
+> period. This is a security feature to ensure that tokens are 
+> not valid indefinitely. When a token expires, you will need 
+> to log in again to obtain a new token.
+
+### Check the Database
+
+1. Connect to your PostgreSQL database using a tool like psql, pgAdmin, or any database client.
+
+2. Run the following query to check if the user exists:
+
+```sql
+SELECT * FROM "user" WHERE username = 'testuser';
+```
+
+- If no rows are returned, the user does not exist.
+
+- If the user exists, verify that the password column contains a valid bcrypt hash.
+
+### API Workflow
+**Registration:**
+
+1. User registers with username: testuser and password: testpassword.
+
+2. Backend hashes the password and stores it in the database:
+
+```plaintext
+username: testuser
+password: $2a$10$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUV
+```
+
+**Login:**
+
+1. User logs in with username: testuser and password: testpassword.
+
+2. Backend retrieves the hashed password from the database and compares it with the provided password:
+
+```typescript
+const isPasswordValid = bcrypt.compareSync('testpassword', '$2a$10$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUV');
+```
+3. If the passwords match, the user is authenticated.
+
+**Final Thoughts**
+- The user only needs to enter their plain text password during login.
+
+- The system handles password hashing and comparison automatically.
+
+- If the password is currently stored in plain text, hash it once and update the database.
+
+### Sync Data (If Needed)
+If the database is empty or doesn’t have the required data, sync the data from the external API.
+
+You should get a JWT token before executing the `curl -X POST http://localhost:4000/data/sync` command because the /data/sync endpoint is protected by the AuthGuard('jwt'). This is because the AuthGuard('jwt') ensures that only authenticated users (with a valid JWT token) can access the endpoint.
+
+Sync Command:
+```bash
+
+curl -X POST http://localhost:4000/data/sync
+```
+Expected Response:
+```json
+{
+  "message": "Data synchronization completed"
+}
+```
+After syncing, check the database again to ensure the data has been populated, conside that you need to be authenticated.
+
+### Steps to Get a JWT Token and Sync Data
+1. Register a User (If Not Already Registered)
+
+If you haven’t already registered a user, do so first.
+
+```bash
+curl -X POST http://localhost:4000/users/register -H "Content-Type: application/json" -d "{\"username\": \"testuser\", \"password\": \"testpassword\"}"
+```
+Response:
+```json
+{
+  "id": 1,
+  "username": "testuser"
+}
+```
+
+2. Log In to Get a JWT Token
+
+Use the /auth/login endpoint to log in and obtain a JWT token.
+
+```bash
+curl -X POST http://localhost:4000/auth/login -H "Content-Type: application/json" -d "{\"username\": \"testuser\", \"password\": \"testpassword\"}"
+```
+Response:
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+Copy the access_token value from the response. You’ll use it in the next step.
+
+3. Sync Data
+
+Use the JWT token to access the /data/sync endpoint.
+
+```bash
+curl -X POST http://localhost:4000/data/sync -H "Authorization: Bearer <your_access_token>"
+```
+Replace ``<your_access_token>`` with the token you obtained from the login response.
+
+Expected Response:
+```json
+{
+  "message": "Data synchronization completed"
+}
+```
+
+## Example Use Cases
+Here are some examples of how to use the /data endpoint to retrieve different types of data:
+
+1. Get All Data
+URL: http://localhost:4000/data
+
+Response: Returns all data in the database.
+
+2. Filter by Year
+URL: http://localhost:4000/data?startYear=2020
+
+Response: Returns data for the year 2020 and later.
+
+3. Filter by Transport Type
+URL: http://localhost:4000/data?transportType=Autobús
+
+Response: Returns data for the transport type Autobús.
+
+4. Filter by Year and Transport Type
+URL: http://localhost:4000/data?startYear=2020&transportType=Tren Eléctrico
+
+Response: Returns data for the year 2020 and later, filtered by the transport type Tren Eléctrico.
+
+5. Filter by Year Range
+URL: http://localhost:4000/data?startYear=2020&endYear=2022
+
+Response: Returns data for the years 2020 to 2022.
+
+6. Filter by Month
+URL: http://localhost:4000/data?startMonth=1&endMonth=6
+
+Response: Returns data for months 1 to 6.
+
+## Contributing
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository.
+
+2. Create a new branch (git checkout -b feature/YourFeatureName).
+
+3. Commit your changes (git commit -m 'Add some feature').
+
+4. Push to the branch (git push origin feature/YourFeatureName).
+
+5. Open a pull request.
