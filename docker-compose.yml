@@ -31,6 +31,15 @@ services:
     networks:
       - transporte-net
 
+  frontend:
+    build: ./front
+    container_name: transporte-front
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    networks:
+      - transporte-net
+
 networks:
   transporte-net:
     driver: bridge
