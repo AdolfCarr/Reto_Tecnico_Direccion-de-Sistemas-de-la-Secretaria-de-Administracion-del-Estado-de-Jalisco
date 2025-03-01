@@ -1,56 +1,22 @@
-// components/register/register.component.ts
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-//import { Router } from '@angular/router';
 import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule,
-    RouterModule],
-  template: `
-    <div class="form-container">
-      <h1 class="form-title">Crear Cuenta</h1>
-      
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <input
-            type="text"
-            class="form-input"
-            formControlName="username"
-            placeholder="Nombre de usuario"
-          >
-        </div>
-        
-        <div class="form-group">
-          <input
-            type="password"
-            class="form-input"
-            formControlName="password"
-            placeholder="Contraseña"
-          >
-        </div>
-  
-        <button type="submit" class="form-button">Registrarse</button>
-        
-        <div *ngIf="errorMessage" class="error-message">
-          {{ errorMessage }}
-        </div>
-      </form>
-  
-      <div class="links-container">
-        <a routerLink="/login">¿Ya tienes cuenta? Inicia Sesión</a>
-      </div>
-    </div>
-  `
+  imports: [ReactiveFormsModule, RouterModule, CommonModule],
+  templateUrl: './register.component.html', // Usar archivo HTML externo
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
   registerForm = new FormGroup({
-    username: new FormControl(''),
-    password: new FormControl('')
+    username: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)])
   });
 
+  showErrors = false; // Controla si se muestran los mensajes de error
   errorMessage = '';
 
   constructor(
@@ -59,20 +25,20 @@ export class RegisterComponent {
   ) { }
 
   onSubmit() {
-    const { username, password } = this.registerForm.value;
+    // Mostrar errores al hacer clic en "Registrarse"
+    this.showErrors = true;
 
-    if (!username || !password) {
-      this.errorMessage = 'Username and password are required';
+    // Verificar si el formulario es inválido
+    if (this.registerForm.invalid) {
+      this.errorMessage = 'Por favor, completa todos los campos correctamente.';
       return;
     }
 
-    this.authService.register(username, password).subscribe({
-      next: () => {
-        this.router.navigate(['/login']);
-      },
-      error: (error) => {
-        this.errorMessage = error.message || 'Registration failed';
-      }
-    });
+    const { username, password } = this.registerForm.value;
+    this.authService.register(username!, password!)
+      .subscribe({
+        next: () => this.router.navigate(['/login']),
+        error: (error) => this.errorMessage = error.message || 'Error en el registro'
+      });
   }
 }

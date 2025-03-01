@@ -1,7 +1,45 @@
-<div *ngIf="registerForm.get('username')?.hasError('required') && registerForm.touched">
-    Username is required
-</div>
-
-<div *ngIf="registerForm.get('password')?.hasError('required') && registerForm.touched">
-    Password is required
-</div>
+<div class="form-container">
+    <h1 class="form-title">Crear Cuenta</h1>
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <input
+          type="text"
+          class="form-input"
+          formControlName="username"
+          placeholder="Nombre de usuario"
+        >
+        @if (showErrors && registerForm.get('username')?.hasError('required')) {
+          <div class="error-message">El nombre de usuario es requerido.</div>
+        }
+        @if (showErrors && registerForm.get('username')?.hasError('minlength')) {
+          <div class="error-message">El nombre de usuario debe tener al menos 3 caracteres.</div>
+        }
+      </div>
+      
+      <div class="form-group">
+        <input
+          type="password"
+          class="form-input"
+          formControlName="password"
+          placeholder="Contraseña"
+        >
+        @if (showErrors && registerForm.get('password')?.hasError('required')) {
+          <div class="error-message">La contraseña es requerida.</div>
+        }
+        @if (showErrors && registerForm.get('password')?.hasError('minlength')) {
+          <div class="error-message">La contraseña debe tener al menos 6 caracteres.</div>
+        }
+      </div>
+  
+      <button type="submit" class="form-button">Registrarse</button>
+      
+      @if (errorMessage) {
+        <div class="error-message">{{ errorMessage }}</div>
+      }
+    </form>
+  
+    <div class="links-container">
+      <a routerLink="/login">¿Ya tienes cuenta? Inicia Sesión</a>
+    </div>
+  </div>
