@@ -1,1 +1,45 @@
-<p>login works!</p>
+<div class="form-container">
+    <h1 class="form-title">Iniciar Sesión</h1>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <input 
+          type="text" 
+          class="form-input"
+          formControlName="username" 
+          placeholder="Nombre de usuario"
+        >
+        @if (showErrors && loginForm.get('username')?.hasError('required')) {
+          <div class="error-message">El nombre de usuario es requerido.</div>
+        }
+        @if (showErrors && loginForm.get('username')?.hasError('minlength')) {
+          <div class="error-message">El nombre de usuario debe tener al menos 3 caracteres.</div>
+        }
+      </div>
+      
+      <div class="form-group">
+        <input
+          type="password"
+          class="form-input"
+          formControlName="password"
+          placeholder="Contraseña"
+        >
+        @if (showErrors && loginForm.get('password')?.hasError('required')) {
+          <div class="error-message">La contraseña es requerida.</div>
+        }
+        @if (showErrors && loginForm.get('password')?.hasError('minlength')) {
+          <div class="error-message">La contraseña debe tener al menos 6 caracteres.</div>
+        }
+      </div>
+  
+      <button type="submit" class="form-button">Ingresar</button>
+      
+      @if (errorMessage) {
+        <div class="error-message">{{ errorMessage }}</div>
+      }
+    </form>
+  
+    <div class="links-container">
+      <a routerLink="/register">¿No tienes cuenta? Regístrate</a>
+    </div>
+  </div>

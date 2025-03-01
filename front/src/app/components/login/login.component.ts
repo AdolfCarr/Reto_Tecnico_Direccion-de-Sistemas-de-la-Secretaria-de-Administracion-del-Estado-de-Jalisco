@@ -1,56 +1,22 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule,
-    RouterModule
-  ],
-  template: `
-  <div class="form-container">
-    <h1 class="form-title">Iniciar Sesión</h1>
-    
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <input 
-          type="text" 
-          class="form-input"
-          formControlName="username" 
-          placeholder="Nombre de usuario"
-        >
-      </div>
-      
-      <div class="form-group">
-        <input
-          type="password"
-          class="form-input"
-          formControlName="password"
-          placeholder="Contraseña"
-        >
-      </div>
-
-      <button type="submit" class="form-button">Ingresar</button>
-      
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-    </form>
-
-    <div class="links-container">
-      <a routerLink="/register">¿No tienes cuenta? Regístrate</a>
-    </div>
-  </div>
-`
+  imports: [ReactiveFormsModule, RouterModule, CommonModule],
+  templateUrl: './login.component.html', // Usar archivo HTML externo
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   loginForm = new FormGroup({
-    username: new FormControl(''),
-    password: new FormControl('')
+    username: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)])
   });
 
+  showErrors = false; // Controla si se muestran los mensajes de error
   errorMessage = '';
 
   constructor(
@@ -59,11 +25,20 @@ export class LoginComponent {
   ) { }
 
   onSubmit() {
+    // Mostrar errores al hacer clic en "Ingresar"
+    this.showErrors = true;
+
+    // Verificar si el formulario es inválido
+    if (this.loginForm.invalid) {
+      this.errorMessage = 'Por favor, completa todos los campos correctamente.';
+      return;
+    }
+
     const { username, password } = this.loginForm.value;
     this.authService.login(username!, password!)
       .subscribe({
         next: () => this.router.navigate(['/dashboard']),
-        error: () => this.errorMessage = 'Invalid credentials'
+        error: () => this.errorMessage = 'Credenciales inválidas'
       });
   }
 }
