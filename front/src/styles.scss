@@ -1,0 +1,154 @@
+// Colores base
+:root {
+    --primary-color: #3f51b5;
+    --accent-color: #ff4081;
+    --background: #f5f5f5;
+    --text-color: #333;
+}
+
+// Estilos base
+body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    justify-content: center; /* Centrado vertical */
+    align-items: center;     /* Centrado horizontal */
+    overflow: auto;
+    
+}
+
+// Clases reutilizables
+.form-container {
+    animation: slideIn 0.5s ease-out;
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center; // Centra horizontalmente los elementos hijos
+    //max-height: 95vh; /* 95% del viewport height */
+    overflow-y: auto; /* Scroll interno solo si contenido excede altura */
+}
+
+form {
+    width: 100%; // Ocupa todo el ancho del contenedor padre
+}
+
+.form-group {
+    width: 100%; // Los grupos ocupan todo el ancho
+  }
+
+.form-title {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-input {
+    width: 100%;
+    box-sizing: border-box; // Incluye padding en el ancho total
+    text-align: left; // Fuerza alineación izquierda del texto 
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+    }
+
+    &:hover {
+        border-color: #999;
+    }
+}
+
+.form-button {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: darken(#3f51b5, 10%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.links-container {
+    text-align: center;
+    margin-top: 1.5rem;
+
+    a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+
+        &:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+    }
+}
+
+.error-message {
+    color: #d32f2f;
+    background: #ffebee;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+@keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  html {
+    height: 100%;
+    overflow: hidden; /* Elimina scroll global */
+  }
+  
+  .page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  router-outlet {
+    flex: 1;
+  }
