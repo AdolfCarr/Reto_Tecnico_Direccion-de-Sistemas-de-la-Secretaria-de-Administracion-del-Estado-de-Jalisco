@@ -20,7 +20,7 @@
 
 A **Angular** frontend for interacting with transport statistics data from the **IIEG API**, stored in **PostgreSQL**.
 
-## Ejecucion local
+## Ejecucion local (from `commit 1423a7a3442795a2e53e51eaee8f1186ce0c9bc2`)
 
 1. Ejecutar el backend con Docker.
 
@@ -173,8 +173,11 @@ After syncing, check the database again to ensure the data has been populated, c
 Common solutions:
 
 ```bash
-#removes all unused Docker objects to free up disk space
+# Removes all unused Docker objects to free up disk space
 docker system prune -a --volumes
+
+# Remove old containers and volumes
+docker-compose down -v
 
 # Borra y recrea los contenedores
 docker-compose build --no-cache
@@ -227,7 +230,7 @@ Ingresa en el browser `http://localhost:4200/`
 
 Registra un nuevo usuario o ingresa con el creado previamente con el comnado `curl` desde `cmd`.
 
-## 🚀 Deployment with Docker
+## 🚀 Deployment with Docker(from `commit 246dcfec34b641fa30e39791f6973fae4b412ca4`)
 
 ### Prerequisites
 
@@ -238,7 +241,7 @@ Registra un nuevo usuario o ingresa con el creado previamente con el comnado `cu
 
 - **The objective:**
 
-  Automate extraction (not manual) of information from the following source via backend: [IIEG API](https://iieg.gob.mx/ns/?page_id=36831), and store it in a SQL-based database (PostgreSQL).
+  Generate a simple graphic interface to automate extraction of information from the following source via backend-frontend: [IIEG API](https://iieg.gob.mx/ns/?page_id=36831), through a login logout form and a dashboard to interc with the data.
 
 ### Project setup
 
@@ -257,7 +260,11 @@ The project is **dockerized**, so clone it and run the following command inside 
 Build and start containers:
 
 ```bash
-docker-compose up --build
+# Remove old containers and volumes
+docker-compose down -v
+# Recrea los contenedores
+docker-compose build --no-cache
+docker-compose up
 ```
 
 3. **Check containers**
@@ -266,71 +273,7 @@ docker-compose up --build
 docker ps -a
 ```
 
-4. **Access the API**
-
-Access the API through the browser or with curl:
-
-```bash
-http://localhost:4000/data?startYear=2020&transportType=Tren Eléctrico
-```
-or in `cmd`
-
-```bash
-curl http://localhost:4000/data?startYear=2020&transportType=Tren Eléctrico
-
-```
-
-Possible expected data structure:
-
-```json
-[
-  {
-    "id": "665e1214eb09d28a75840855",
-    "year": 2020,
-    "month": 1,
-    "transportType": {
-      "id": 1,
-      "name": "Tren Eléctrico"
-    },
-    "metricType": {
-      "id": 1,
-      "name": "Ingresos por pasaje"
-    },
-    "entity": "Jalisco",
-    "municipality": "Guadalajara",
-    "value": "45270437.00",
-    "status": "Cifras Definitivas"
-  },
-  {
-    "id": "665e1214eb09d28a75840856",
-    "year": 2020,
-    "month": 1,
-    "transportType": {
-      "id": 1,
-      "name": "Tren Eléctrico"
-    },
-    "metricType": {
-      "id": 2,
-      "name": "Kilómetros recorridos"
-    },
-    "entity": "Jalisco",
-    "municipality": "Guadalajara",
-    "value": "508340.00",
-    "status": "Cifras Definitivas"
-  }
-]
-
-```
-
-If recieving an empty Json then see the section `Data Extraction` on this document to resolve.
-
-```bash
-# recieved an empty Json
-[]
-```
-
-
-5. **Restart containers if needed**
+4. **Restart containers if needed**
 
 ```bash
 # Remove old containers and volumes
@@ -352,9 +295,6 @@ docker ps -a
 ### Data Extraction
 1. **Manual Execution**
 
-```bash
-docker exec transporte-back node -r ts-node/register src/scripts/fetch-data.ts
-```
 
 2. **Scheduled Execution (Daily 3AM)**
 
@@ -366,12 +306,12 @@ Already configured via:
 
 ### Verification Final Steps
 
-1. **Test API on the browser**
+1. **Test App on the browser**
 
 Go to:
 
 ```http
-http://localhost:4000/data
+http://localhost
 ```
 
 2. **Verify data in PostgreSQL**
@@ -410,137 +350,22 @@ To monitor logs in real-time:
 docker logs transporte-back --follow
 ```
 
+```bash
+docker logs transporte-front --follow
+```
+
 > [!IMPORTANT]
 > *The backend will be operational at* http://localhost:4000
 
 ### Common Troubleshooting
 
-1. **Data is not being saved:**
+ #### Check the Database
 
-Receiving an empty JSON when testing the API in the browser
-
-```bash
-# recieved an empty Json
-[]
-```
-
-Force the extraction of data when starting the app instead of relying on the cron job. Call fetchAndSaveData() automatically.
-
-Run the following from Docker:
-
-Run from Docker:
-```bash
-docker exec transporte-back node -r ts-node/register src/scripts/fetch-data.ts
-```
-
-2. **If everything fails**
-
-Restart everything::
+1. Connect to your PostgreSQL database using a tool like `cmd` in windows and with the Backend container running execute the next command.
 
 ```bash
-docker-compose down -v && docker-compose up --build
+docker exec -it transporte-db psql -U transporte_user -d transporte_db;
 ```
-
-> [!CAUTION]
-> *The last instructions are for the branch 'backend' on its **commit 231da5f299abfaf095955e050cd215a9ae98abd4**
-
-## Test the final version of the Endpoint on ` commit bd730420fbcf85cf51aebc9e7d0709b1b4240d8d (origin/backend, backend)`
-
->[!INFORMATION]
-After applying JWT Authantication, the Login and Logout features follow the next instructions to test the endpoints, and database.
-
-1. **Regist A User**
-
-```bash
-
-curl -X POST http://localhost:4000/users/register \
--H "Content-Type: application/json" \
--d '{"username": "testuser", "password": "testpassword"}'
-```
-```bash
-# for windows cmd
-curl -X POST http://localhost:4000/users/register -H "Content-Type: application/json" -d "{\"username\": \"testuser\", \"password\": \"testpassword\"}"
-```
-
-Prueba el registro con formato JSON correcto (evita problemas de comillas en Windows):
-
-```bash
-
-bash
-Copy
-curl -X POST http://localhost:4000/users/register ^
-  -H "Content-Type: application/json" ^
-  -d "{\"username\": \"testuser2\", \"password\": \"Testpass123!\"}"
-  ```
-
-Example Response:
-
-```json
-
-{
-  "id": 1,
-  "username": "testuser"
-}
-```
-This creates a user with the username testuser and password testpassword.
-
-2. **Log In to Get a JWT Token**
-
-Now that the user is registered, you can log in to get a JWT token.
-
-Login Command:
-```bash
-curl -X POST http://localhost:4000/auth/login \
--H "Content-Type: application/json" \
--d '{"username": "testuser", "password": "testpassword"}'
-```
-
-```bash
-# for windows cmd
-curl -X POST http://localhost:4000/auth/login -H "Content-Type: application/json" -d "{\"username\": \"testuser\", \"password\": \"testpassword\"}"
-```
-
-Example Response:
-
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
-Copy the access_token value. You’ll use it in the next step.
-
-3. **Call the Protected Endpoint**
-Use the access_token to call the protected GET /data endpoint.
-
-Example Command:
-```bash
-curl -X GET "http://localhost:4000/data?startYear=2020&transportType=Autobús" \
--H "Authorization: Bearer <your_access_token>"
-```
-
-```bash
-# for windows cmd
-curl -X GET "http://localhost:4000/data?startYear=2020&transportType=Autobús" -H "Authorization: Bearer <your_access_token>"
-```
-
-Replace <your_access_token> with the token you obtained in Step 2.
-
-> [!IMPORTANT]
-> Fix for Windows Command Prompt, you need to:
-> 1. Use double quotes (") for the JSON string.
-> 2. Escape the double quotes inside the JSON using a backslash (\).
-
-
-> [!WARNING]
-> JWT tokens are time-limited and will expire after a certain 
-> period. This is a security feature to ensure that tokens are 
-> not valid indefinitely. When a token expires, you will need 
-> to log in again to obtain a new token.
-
-### Check the Database
-
-1. Connect to your PostgreSQL database using a tool like psql, pgAdmin, or any database client.
 
 2. Run the following query to check if the user exists:
 
@@ -552,28 +377,89 @@ SELECT * FROM "user" WHERE username = 'testuser';
 
 - If the user exists, verify that the password column contains a valid bcrypt hash.
 
-### API Workflow
-**Registration:**
+### Frontend Workflow
+#### Registration:
 
-1. User registers with username: testuser and password: testpassword.
+1. El usuario ingresa sus datos en el formulario de registro:
 
-2. Backend hashes the password and stores it in the database:
+   - El usuario proporciona información como nombre de usuario, contraseña, y cualquier otro dato requerido (por ejemplo, correo electrónico).
 
-```plaintext
-username: testuser
-password: $2a$10$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUV
-```
+2. El frontend envía los datos al backend:
 
-**Login:**
+   - El formulario de registro llama al método register() del servicio AuthService.
 
-1. User logs in with username: testuser and password: testpassword.
+   - Se realiza una solicitud HTTP POST al endpoint /users/register del backend.
 
-2. Backend retrieves the hashed password from the database and compares it with the provided password:
+3. El backend procesa la solicitud de registro:
 
-```typescript
-const isPasswordValid = bcrypt.compareSync('testpassword', '$2a$10$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUV');
-```
-3. If the passwords match, the user is authenticated.
+   - El backend recibe los datos del usuario.
+
+   - Valida que los datos sean correctos (por ejemplo, que el nombre de usuario no esté en uso).
+
+   - Hashea la contraseña usando un algoritmo seguro (por ejemplo, bcrypt).
+
+4. El backend almacena el usuario en la base de datos PostgreSQL:
+
+   - El backend ejecuta una consulta SQL para insertar el nuevo usuario en la tabla users de la base de datos PostgreSQL.
+
+   - La contraseña se almacena en forma de hash, no en texto plano.
+
+5. El backend responde al frontend:
+
+   - Si el registro es exitoso, el backend devuelve una respuesta de éxito (por ejemplo, un mensaje o un código de estado 201).
+
+   - Si hay un error (por ejemplo, el nombre de usuario ya existe), el backend devuelve un mensaje de error.
+
+6. El frontend maneja la respuesta:
+
+   - Si el registro es exitoso, el frontend redirige al usuario a la página de login.
+
+   - Si hay un error, el frontend muestra un mensaje de error al usuario.
+
+#### Login:
+
+1. El usuario ingresa sus credenciales:
+
+   - El usuario escribe su nombre de usuario y contraseña en el formulario de login.
+
+2. El frontend envía las credenciales al backend:
+
+   - El formulario de login llama al método login() del servicio AuthService.
+
+   - Se realiza una solicitud HTTP POST al endpoint /auth/login del backend.
+
+3. El backend valida las credenciales:
+
+   - El backend verifica si el usuario existe y si la contraseña es correcta.
+
+   - Si las credenciales son válidas, el backend genera un token JWT (JSON Web Token) y lo devuelve al frontend.
+
+4. El frontend almacena el token:
+
+   - El frontend recibe el token y lo guarda en el localStorage o sessionStorage.
+
+   - El token se usa para autenticar solicitudes futuras al backend.
+
+5. El frontend redirige al usuario al dashboard:
+
+   - Después de un login exitoso, el usuario es redirigido a la página de dashboard (o cualquier otra ruta protegida).
+
+#### Logout:
+1. El usuario hace clic en el botón de logout:
+
+   - El botón de logout llama al método logout() del servicio AuthService.
+
+2. El frontend elimina el token:
+
+   - El token se elimina del localStorage o sessionStorage.
+
+3. El frontend redirige al usuario a la página de login:
+
+   - Después de eliminar el token, el usuario es redirigido a la página de login.
+
+4. El backend invalida el token (opcional):
+
+   - Si el backend tiene un sistema de invalidación de tokens, el frontend puede enviar una solicitud para invalidar el token actual.
 
 **Final Thoughts**
 - The user only needs to enter their plain text password during login.
@@ -582,114 +468,3 @@ const isPasswordValid = bcrypt.compareSync('testpassword', '$2a$10$abcdefghijklm
 
 - If the password is currently stored in plain text, hash it once and update the database.
 
-### Sync Data (If Needed)
-If the database is empty or doesn’t have the required data, sync the data from the external API.
-
-You should get a JWT token before executing the `curl -X POST http://localhost:4000/data/sync` command because the /data/sync endpoint is protected by the AuthGuard('jwt'). This is because the AuthGuard('jwt') ensures that only authenticated users (with a valid JWT token) can access the endpoint.
-
-Sync Command:
-```bash
-
-curl -X POST http://localhost:4000/data/sync
-```
-Expected Response:
-```json
-{
-  "message": "Data synchronization completed"
-}
-```
-After syncing, check the database again to ensure the data has been populated, conside that you need to be authenticated.
-
-### Steps to Get a JWT Token and Sync Data
-1. Register a User (If Not Already Registered)
-
-If you haven’t already registered a user, do so first.
-
-```bash
-curl -X POST http://localhost:4000/users/register -H "Content-Type: application/json" -d "{\"username\": \"testuser\", \"password\": \"testpassword\"}"
-```
-Response:
-```json
-{
-  "id": 1,
-  "username": "testuser"
-}
-```
-
-2. Log In to Get a JWT Token
-
-Use the /auth/login endpoint to log in and obtain a JWT token.
-
-```bash
-curl -X POST http://localhost:4000/auth/login -H "Content-Type: application/json" -d "{\"username\": \"testuser\", \"password\": \"testpassword\"}"
-```
-Response:
-
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-Copy the access_token value from the response. You’ll use it in the next step.
-
-3. Sync Data
-
-Use the JWT token to access the /data/sync endpoint.
-
-```bash
-curl -X POST http://localhost:4000/data/sync -H "Authorization: Bearer <your_access_token>"
-```
-Replace ``<your_access_token>`` with the token you obtained from the login response.
-
-Expected Response:
-```json
-{
-  "message": "Data synchronization completed"
-}
-```
-
-## Example Use Cases
-Here are some examples of how to use the /data endpoint to retrieve different types of data:
-
-1. Get All Data
-URL: http://localhost:4000/data
-
-Response: Returns all data in the database.
-
-2. Filter by Year
-URL: http://localhost:4000/data?startYear=2020
-
-Response: Returns data for the year 2020 and later.
-
-3. Filter by Transport Type
-URL: http://localhost:4000/data?transportType=Autobús
-
-Response: Returns data for the transport type Autobús.
-
-4. Filter by Year and Transport Type
-URL: http://localhost:4000/data?startYear=2020&transportType=Tren Eléctrico
-
-Response: Returns data for the year 2020 and later, filtered by the transport type Tren Eléctrico.
-
-5. Filter by Year Range
-URL: http://localhost:4000/data?startYear=2020&endYear=2022
-
-Response: Returns data for the years 2020 to 2022.
-
-6. Filter by Month
-URL: http://localhost:4000/data?startMonth=1&endMonth=6
-
-Response: Returns data for months 1 to 6.
-
-## Contributing
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository.
-
-2. Create a new branch (git checkout -b feature/YourFeatureName).
-
-3. Commit your changes (git commit -m 'Add some feature').
-
-4. Push to the branch (git push origin feature/YourFeatureName).
-
-5. Open a pull request.

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { tap } from 'rxjs';
 
@@ -7,11 +8,18 @@ import { tap } from 'rxjs';
 export class AuthService {
   private readonly apiUrl = environment.backendUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private router: Router
+  ) { }
 
   login(username: string, password: string) {
     return this.http.post<{ access_token: string }>(`${this.apiUrl}/auth/login`, { username, password })
-      .pipe(tap(res => localStorage.setItem('token', res.access_token)));
+      .pipe(
+        tap(res => {
+          localStorage.setItem('token', res.access_token);
+          this.router.navigate(['/dashboard']);
+        })
+      );
   }
   /*
     register(username: string, password: string) {
@@ -33,5 +41,6 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    this.router.navigate(['/login']); // Redirige al login
   }
 }

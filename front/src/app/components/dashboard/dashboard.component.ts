@@ -15,7 +15,7 @@ export class DashboardComponent {
   constructor(private authService: AuthService) {}
 
   logout() {
-    this.authService.logout();
-    window.location.reload();
+    this.authService.logout();// Llama al método logout del servicio
+    //window.location.reload();
   }
 }

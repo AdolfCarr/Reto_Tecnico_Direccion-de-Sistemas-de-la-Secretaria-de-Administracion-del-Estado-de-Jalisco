@@ -11,4 +11,10 @@ export class AuthController {
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
+
+  @Post('logout')
+  async logout() {
+    return { message: 'Logged out successfully' };
+  }
+  
 }
