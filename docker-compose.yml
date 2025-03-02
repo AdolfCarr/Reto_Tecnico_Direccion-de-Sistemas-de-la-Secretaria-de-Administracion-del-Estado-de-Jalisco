@@ -14,7 +14,7 @@ services:
     networks:
       - transporte-net
 
-  back:
+  backend:
     build: ./back
     container_name: transporte-back
     env_file: .env
