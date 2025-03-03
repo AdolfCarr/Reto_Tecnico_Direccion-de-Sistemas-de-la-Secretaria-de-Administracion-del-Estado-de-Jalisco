@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   standalone: true,
   imports: [ReactiveFormsModule, RouterModule, CommonModule],
-  templateUrl: './login.component.html', // Usar archivo HTML externo
+  templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
@@ -18,6 +18,8 @@ export class LoginComponent {
 
   showErrors = false; // Controla si se muestran los mensajes de error
   errorMessage = '';
+  isLoading = false; // Estado de carga
+
 
   constructor(
     private authService: AuthService,
@@ -35,10 +37,19 @@ export class LoginComponent {
     }
 
     const { username, password } = this.loginForm.value;
+    this.isLoading = true; // Activar spinner
+    this.errorMessage = ''; // Limpiar mensajes de error anteriores
+
     this.authService.login(username!, password!)
       .subscribe({
-        next: () => this.router.navigate(['/dashboard']),
-        error: () => this.errorMessage = 'Credenciales inválidas'
+        next: () => {
+          this.isLoading = false;
+          this.router.navigate(['/dashboard']);
+        },
+        error: () => {
+          this.errorMessage = 'Credenciales inválidas';
+          this.isLoading = false; // Desactivar spinner
+        }
       });
   }
 }

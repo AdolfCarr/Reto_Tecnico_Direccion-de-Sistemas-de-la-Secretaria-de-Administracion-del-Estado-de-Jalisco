@@ -6,6 +6,7 @@ import { TransportType } from '../entities/transport-type.entity';
 import { MetricType } from '../entities/metric-type.entity';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { Stats } from '../interfaces/stats.interface';
 
 @Injectable()
 export class DataService {
@@ -17,7 +18,7 @@ export class DataService {
     @InjectRepository(MetricType)
     private metricTypeRepo: Repository<MetricType>,
     private httpService: HttpService,
-  ) {}
+  ) { }
 
   /*
   Method to fetch and save data from the external 
@@ -101,5 +102,86 @@ export class DataService {
     }
 
     return query.getMany();
+  }
+
+  async getAggregatedStats(
+    startYear?: number,
+    endYear?: number,
+    startMonth?: number,
+    endMonth?: number,
+    transportType?: string,
+  ): Promise<Stats> {
+    const query = this.transportDataRepo
+      .createQueryBuilder('data')
+      .leftJoinAndSelect('data.transportType', 'transport')
+      .leftJoinAndSelect('data.metricType', 'metric');
+
+    if (startYear) query.andWhere('data.year >= :startYear', { startYear });
+    if (endYear) query.andWhere('data.year <= :endYear', { endYear });
+    if (startMonth) query.andWhere('data.month >= :startMonth', { startMonth });
+    if (endMonth) query.andWhere('data.month <= :endMonth', { endMonth });
+    if (transportType) query.andWhere('transport.name = :transportType', { transportType });
+
+    const data = await query.getMany();
+
+    // Inicializar estadísticas
+    const stats: Stats = {
+      totalRevenue: 0,          // Ingresos por pasaje
+      totalPassengers: 0,       // Pasajeros transportados
+      totalKilometers: 0,       // Kilómetros recorridos
+      totalServiceLength: 0,    // Longitud de servicio
+      totalUnits: 0,            // Unidades en operación
+      totalLines: 0,            // Líneas en servicio
+      totalWeekdayBuses: 0,     // Autobuses en operación de lunes a viernes
+      totalWeekendBuses: 0,     // Autobuses en operación de sábado a domingo
+      totalPaidPassengers: 0,   // Pasajeros transportados con boleto pagado
+      totalCourtesyPassengers: 0, // Pasajeros transportados con cortesía
+      totalDiscountedPassengers: 0, // Pasajeros transportados con descuento
+      totalRoutes: 0,           // Rutas
+    };
+
+    // Calcular estadísticas
+    data.forEach((item) => {
+      switch (item.metricType.name) {
+        case 'Ingresos por pasaje':
+          stats.totalRevenue += item.value;
+          break;
+        case 'Pasajeros transportados':
+          stats.totalPassengers += item.value;
+          break;
+        case 'Kilómetros recorridos':
+          stats.totalKilometers += item.value;
+          break;
+        case 'Longitud de servicio':
+          stats.totalServiceLength += item.value;
+          break;
+        case 'Unidades en operación':
+          stats.totalUnits += item.value;
+          break;
+        case 'Lineas en servicio':
+          stats.totalLines += item.value;
+          break;
+        case 'Autobuses en operación de lunes a viernes':
+          stats.totalWeekdayBuses += item.value;
+          break;
+        case 'Autobuses en operación de sábado a domingo':
+          stats.totalWeekendBuses += item.value;
+          break;
+        case 'Pasajeros transportados con boleto pagado':
+          stats.totalPaidPassengers += item.value;
+          break;
+        case 'Pasajeros transportados con cortesía':
+          stats.totalCourtesyPassengers += item.value;
+          break;
+        case 'Pasajeros transportados con descuento':
+          stats.totalDiscountedPassengers += item.value;
+          break;
+        case 'Rutas':
+          stats.totalRoutes += item.value;
+          break;
+      }
+    });
+
+    return stats;
   }
 }

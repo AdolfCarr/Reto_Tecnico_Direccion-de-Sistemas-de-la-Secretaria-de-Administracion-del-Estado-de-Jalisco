@@ -4,7 +4,8 @@ import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService,
+  ) { }
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
@@ -16,5 +17,5 @@ export class AuthController {
   async logout() {
     return { message: 'Logged out successfully' };
   }
-  
+
 }

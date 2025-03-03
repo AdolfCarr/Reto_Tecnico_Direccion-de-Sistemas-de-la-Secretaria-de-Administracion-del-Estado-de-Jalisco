@@ -1,1 +1,87 @@
-<p>dashboard works!</p>
+<div class="dashboard">
+    <h1>Dashboard</h1>
+    
+    <!-- Sincronización de datos -->
+    <div class="sync-section">
+      <button (click)="syncData()" [disabled]="isSyncing">
+        @if (isSyncing) {
+          <span class="spinner"></span> <!-- Spinner -->
+        } @else {
+          <span>Sincronizar Datos</span>
+        }
+      </button>
+      @if (syncMessage) {
+        <div class="sync-message">{{ syncMessage }}</div>
+      }
+    </div>
+  
+    <!-- Filtros -->
+    <div class="filters">
+      <input [(ngModel)]="startYear" placeholder="Año inicio" type="number">
+      <input [(ngModel)]="endYear" placeholder="Año fin" type="number">
+      <input [(ngModel)]="startMonth" placeholder="Mes inicio" type="number">
+      <input [(ngModel)]="endMonth" placeholder="Mes fin" type="number">
+      <select [(ngModel)]="transportType">
+        <option value="">Todos</option>
+        <option *ngFor="let type of transportTypes" [value]="type">{{ type }}</option>
+      </select>
+      <button (click)="loadStats()">Aplicar Filtros</button>
+    </div>
+  
+    <!-- Estadísticas -->
+    <div class="stats">
+      <!-- Métricas principales -->
+      <div class="stat-card">
+        <h3>Ingresos por Pasaje</h3>
+        <p>{{ stats.totalRevenue | currency }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Pasajeros Transportados</h3>
+        <p>{{ stats.totalPassengers }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Kilómetros Recorridos</h3>
+        <p>{{ stats.totalKilometers }} km</p>
+      </div>
+      <div class="stat-card">
+        <h3>Longitud del Servicio</h3>
+        <p>{{ stats.totalServiceLength }} km</p>
+      </div>
+      <div class="stat-card">
+        <h3>Unidades en Operación</h3>
+        <p>{{ stats.totalUnits }}</p>
+      </div>
+  
+      <!-- Nuevas métricas -->
+      <div class="stat-card">
+        <h3>Líneas en Servicio</h3>
+        <p>{{ stats.totalLines }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Autobuses (L-V)</h3>
+        <p>{{ stats.totalWeekdayBuses }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Autobuses (S-D)</h3>
+        <p>{{ stats.totalWeekendBuses }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Pasajeros (Boleto Pagado)</h3>
+        <p>{{ stats.totalPaidPassengers }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Pasajeros (Cortesía)</h3>
+        <p>{{ stats.totalCourtesyPassengers }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Pasajeros (Descuento)</h3>
+        <p>{{ stats.totalDiscountedPassengers }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Rutas</h3>
+        <p>{{ stats.totalRoutes }}</p>
+      </div>
+    </div>
+  
+    <button (click)="logout()">Cerrar Sesión</button>
+  </div>

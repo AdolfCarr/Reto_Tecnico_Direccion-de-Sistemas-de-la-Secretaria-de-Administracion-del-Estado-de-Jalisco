@@ -21,11 +21,6 @@ export class AuthService {
         })
       );
   }
-  /*
-    register(username: string, password: string) {
-      return this.http.post(`${this.apiUrl}/users/register`, { username, password });
-    }
-  */
 
   register(username: string, password: string) {
     return this.http.post(
@@ -42,5 +37,9 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     this.router.navigate(['/login']); // Redirige al login
+  }
+
+  syncData() {
+    return this.http.post(`${this.apiUrl}/data/sync`, {});
   }
 }

@@ -37,6 +37,7 @@ export class DataController {
   data synchronization by calling the fetchAndSaveData() method in the DataService.
   */
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('sync')
   async syncData() {
     try {
@@ -45,5 +46,23 @@ export class DataController {
     } catch (error) {
       throw new InternalServerErrorException('Failed to sync data');
     }
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('stats')
+  async getStats(
+    @Query('startYear') startYear?: number,
+    @Query('endYear') endYear?: number,
+    @Query('startMonth') startMonth?: number,
+    @Query('endMonth') endMonth?: number,
+    @Query('transportType') transportType?: string,
+  ) {
+    return this.dataService.getAggregatedStats(
+      startYear,
+      endYear,
+      startMonth,
+      endMonth,
+      transportType,
+    );
   }
 }
