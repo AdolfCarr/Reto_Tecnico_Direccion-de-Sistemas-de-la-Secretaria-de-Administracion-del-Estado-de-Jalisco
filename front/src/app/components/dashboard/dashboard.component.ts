@@ -8,8 +8,8 @@ import { Stats } from '../../interfaces/stats.interface';
 @Component({
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './dashboard.component.html', // Archivo HTML externo
-  styleUrls: ['./dashboard.component.scss'] // Archivo SCSS externo
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent {
   startYear?: number;
@@ -45,6 +45,7 @@ export class DashboardComponent {
 
   isSyncing = false; // Estado de sincronización
   syncMessage = ''; // Mensaje de sincronización
+  isMenuOpen = false; // Estado del menú hamburguesa
 
   constructor(
     private dataService: DataService,
@@ -87,5 +88,9 @@ export class DashboardComponent {
 
   logout() {
     this.authService.logout();
+  }
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen; // Alternar estado del menú
   }
 }

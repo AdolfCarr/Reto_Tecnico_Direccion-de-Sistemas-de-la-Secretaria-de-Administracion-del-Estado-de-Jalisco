@@ -1,6 +1,44 @@
 <div class="dashboard">
-    <h1>Dashboard</h1>
+  <!-- Menú lateral -->
+  <div class="side-menu" [class.open]="isMenuOpen">
+    <div class="menu-header">
+      <!-- <h3>Menú</h3>-->
+      <!-- Ícono personalizado a la derecha -->
+      <img src="assets\IIEG_Jalisco_2025.svg" alt="Ícono" class="menu-icon">
+      <div class="close-icon" (click)="toggleMenu()">×</div>
+    </div>
+    <!-- Línea de separación -->
+    <div class="separator"></div>
+
+    <!-- Botón "Cerrar Sesión" en la parte inferior -->
+    <div class="logout-section">
+      <button class="logout-button" (click)="logout()">
+        <!--<span class="logout-icon">🚪</span>  Ícono de logout -->
+        <span class="logout-text">Cerrar Sesión</span>
+      </button>
+    </div>
     
+    <!--<a class="menu-item" (click)="logout()">Cerrar Sesión</a>-->
+  </div>
+
+  <!-- Overlay para cerrar el menú -->
+  <div class="overlay" [class.open]="isMenuOpen" (click)="toggleMenu()"></div>
+
+  <!-- Barra superior -->
+  <div class="top-bar">
+    <!-- Menú hamburguesa -->
+    <div class="hamburger-menu" (click)="toggleMenu()">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+
+    <!-- Título del dashboard -->
+    <h1>Dashboard</h1>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="content" [class.menu-open]="isMenuOpen">
     <!-- Sincronización de datos -->
     <div class="sync-section">
       <button (click)="syncData()" [disabled]="isSyncing">
@@ -14,7 +52,7 @@
         <div class="sync-message">{{ syncMessage }}</div>
       }
     </div>
-  
+
     <!-- Filtros -->
     <div class="filters">
       <input [(ngModel)]="startYear" placeholder="Año inicio" type="number">
@@ -27,7 +65,7 @@
       </select>
       <button (click)="loadStats()">Aplicar Filtros</button>
     </div>
-  
+
     <!-- Estadísticas -->
     <div class="stats">
       <!-- Métricas principales -->
@@ -51,7 +89,7 @@
         <h3>Unidades en Operación</h3>
         <p>{{ stats.totalUnits }}</p>
       </div>
-  
+
       <!-- Nuevas métricas -->
       <div class="stat-card">
         <h3>Líneas en Servicio</h3>
@@ -82,6 +120,5 @@
         <p>{{ stats.totalRoutes }}</p>
       </div>
     </div>
-  
-    <button (click)="logout()">Cerrar Sesión</button>
   </div>
+</div>
