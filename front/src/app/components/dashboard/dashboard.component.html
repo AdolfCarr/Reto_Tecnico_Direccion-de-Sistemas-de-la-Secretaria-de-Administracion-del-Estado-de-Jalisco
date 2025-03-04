@@ -59,6 +59,9 @@
       @if (syncMessage) {
       <div class="sync-message">{{ syncMessage }}</div>
       }
+      @if (lastSyncTime) {
+      <div class="last-sync-time">Última sincronización: {{ lastSyncTime }}</div>
+      }
     </div>
 
     <!-- Filtros -->

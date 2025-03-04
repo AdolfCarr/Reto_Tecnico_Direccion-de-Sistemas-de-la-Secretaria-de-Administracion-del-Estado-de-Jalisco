@@ -12,7 +12,8 @@ import { Stats } from '../../interfaces/stats.interface';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent {
-  
+  lastSyncTime: string | null = null; // Almacena la última fecha y hora de sincronización
+
   startYear?: number;
   endYear?: number;
   startMonth?: number;
@@ -52,7 +53,10 @@ export class DashboardComponent {
   constructor(
     private dataService: DataService,
     private authService: AuthService
-  ) { }
+  ) { 
+    // Recuperar la última fecha de sincronización del localStorage al inicializar el componente
+    this.lastSyncTime = localStorage.getItem('lastSyncTime');
+  }
 
   ngOnInit() {
     //this.resetStats(); // Reiniciar estadísticas
@@ -120,6 +124,8 @@ export class DashboardComponent {
       next: () => {
         this.syncMessage = 'Sincronización completada';
         this.isSyncing = false;
+        this.lastSyncTime = new Date().toLocaleString(); // Actualizar la última fecha de sincronización
+        localStorage.setItem('lastSyncTime', this.lastSyncTime); // Guardar en localStorage
         this.loadStats(); // Recargar estadísticas después de sincronizar
       },
       error: () => {
