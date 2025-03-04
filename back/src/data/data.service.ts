@@ -214,4 +214,10 @@ export class DataService {
 
     return stats;
   }
+
+  // Para verificar si la tabla transport_data está vacía:
+  async isDatabaseEmpty(): Promise<boolean> {
+    const count = await this.transportDataRepo.count();
+    return count === 0;
+  }
 }

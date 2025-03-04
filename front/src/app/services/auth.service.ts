@@ -42,4 +42,9 @@ export class AuthService {
   syncData() {
     return this.http.post(`${this.apiUrl}/data/sync`, {});
   }
+
+  isDatabaseEmpty() {
+    return this.http.get<{ isEmpty: boolean }>(`${this.apiUrl}/data/is-empty`);
+  }
+  
 }

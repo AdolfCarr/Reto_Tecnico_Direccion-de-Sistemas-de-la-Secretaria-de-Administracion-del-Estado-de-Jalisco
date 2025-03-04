@@ -47,6 +47,7 @@ export class DashboardComponent {
   isSyncing = false; // Estado de sincronización
   syncMessage = ''; // Mensaje de sincronización
   isMenuOpen = false; // Estado del menú hamburguesa
+  isLoading = false; // Estado de carga inicial
 
   constructor(
     private dataService: DataService,
@@ -54,8 +55,27 @@ export class DashboardComponent {
   ) { }
 
   ngOnInit() {
-    this.resetStats(); // Reiniciar estadísticas
-    this.loadStats(); // Cargar estadísticas (no traerá datos porque transportType es 'none')
+    //this.resetStats(); // Reiniciar estadísticas
+    //this.loadStats(); // Cargar estadísticas (no traerá datos porque transportType es 'none')
+    this.checkDatabaseAndSync(); // Verificar si la base de datos está vacía y sincronizar si es necesario
+  }
+
+  checkDatabaseAndSync() {
+    this.isLoading = true; // Mostrar spinner de carga
+    this.authService.isDatabaseEmpty().subscribe({
+      next: (response) => {
+        if (response.isEmpty) {
+          this.syncData(); // Sincronizar si la base de datos está vacía
+        } else {
+          this.loadStats(); // Cargar estadísticas si la base de datos no está vacía
+        }
+        this.isLoading = false; // Ocultar spinner de carga
+      },
+      error: (err) => {
+        console.error('Error verificando la base de datos', err);
+        this.isLoading = false; // Ocultar spinner de carga
+      }
+    });
   }
 
   loadStats() {

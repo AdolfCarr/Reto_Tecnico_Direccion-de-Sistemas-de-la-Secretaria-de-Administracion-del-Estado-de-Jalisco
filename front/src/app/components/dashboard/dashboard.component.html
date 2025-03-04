@@ -1,4 +1,12 @@
 <div class="dashboard">
+  <!-- Spinner de carga inicial -->
+  @if (isLoading) {
+  <div class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Cargando datos...</p>
+  </div>
+  }
+
   <!-- Menú lateral -->
   <div class="side-menu" [class.open]="isMenuOpen">
     <div class="menu-header">
@@ -17,7 +25,7 @@
         <span class="logout-text">Cerrar Sesión</span>
       </button>
     </div>
-    
+
     <!--<a class="menu-item" (click)="logout()">Cerrar Sesión</a>-->
   </div>
 
@@ -43,13 +51,13 @@
     <div class="sync-section">
       <button (click)="syncData()" [disabled]="isSyncing">
         @if (isSyncing) {
-          <span class="spinner"></span> <!-- Spinner -->
+        <span class="spinner"></span> <!-- Spinner -->
         } @else {
-          <span>Sincronizar Datos</span>
+        <span>Sincronizar Datos</span>
         }
       </button>
       @if (syncMessage) {
-        <div class="sync-message">{{ syncMessage }}</div>
+      <div class="sync-message">{{ syncMessage }}</div>
       }
     </div>
 

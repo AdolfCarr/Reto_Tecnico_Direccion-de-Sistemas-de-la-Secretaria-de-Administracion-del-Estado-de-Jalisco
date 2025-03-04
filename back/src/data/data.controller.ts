@@ -65,4 +65,12 @@ export class DataController {
       transportType,
     );
   }
+  
+  //endpoint para verificar si la base de datos está vacía:
+  @UseGuards(AuthGuard('jwt'))
+  @Get('is-empty')
+  async isDatabaseEmpty() {
+    const isEmpty = await this.dataService.isDatabaseEmpty();
+    return { isEmpty };
+  }
 }
