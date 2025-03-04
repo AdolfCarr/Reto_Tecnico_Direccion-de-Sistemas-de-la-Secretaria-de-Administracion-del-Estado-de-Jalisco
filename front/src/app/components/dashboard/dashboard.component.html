@@ -71,7 +71,7 @@
         <option value="">Todos</option>
         <option *ngFor="let type of transportTypes" [value]="type">{{ type }}</option>
       </select>
-      <button (click)="loadStats()">Aplicar Filtros</button>
+      <button (click)="loadStats()" [disabled]="isSyncing">Aplicar Filtros</button>
     </div>
 
     <!-- Estadísticas -->
