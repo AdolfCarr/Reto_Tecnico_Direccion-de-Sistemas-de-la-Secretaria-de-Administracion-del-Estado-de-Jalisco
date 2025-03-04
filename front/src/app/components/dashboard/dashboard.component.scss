@@ -176,13 +176,57 @@
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
+  align-items: center;// Alinear verticalmente los elementos
 
-  input,
+  input{
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 120px; // Ancho fijo para los inputs y selects
+    font-size: 14px; // Tamaño de fuente
+    box-sizing: border-box; // Incluir padding y border en el ancho
+  }
+
   select {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    width: 240px; // Ancho más largo para el select
+    font-size: 14px; // Tamaño de fuente
+    box-sizing: border-box; // Incluir padding y border en el ancho
+    appearance: none; // Eliminar la apariencia por defecto del select
+    background-color: white;
+    cursor: pointer;
+
+    &:invalid {
+      color: #999; // Color del texto cuando no hay opción seleccionada
+    }
+
+    option {
+      color: #333; // Color del texto de las opciones
+    }
   }
+
+
+  input::placeholder {
+    color: #999; // Color del placeholder
+    opacity: 1; // Asegurar que el placeholder sea visible
+  }
+
+  select {
+    appearance: none; // Eliminar la apariencia por defecto del select
+    background-color: white;
+    cursor: pointer;
+
+    &:invalid {
+      color: #999; // Color del texto cuando no hay opción seleccionada
+    }
+
+    option {
+      color: #333; // Color del texto de las opciones
+    }
+  }
+
 
   button {
     padding: 8px 16px;
