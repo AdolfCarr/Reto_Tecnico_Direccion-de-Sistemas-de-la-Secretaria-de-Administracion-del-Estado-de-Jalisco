@@ -12,11 +12,12 @@ import { Stats } from '../../interfaces/stats.interface';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent {
+  
   startYear?: number;
   endYear?: number;
   startMonth?: number;
   endMonth?: number;
-  transportType = '';
+  transportType = 'none'; // Valor inicial que no coincide con ningún tipo de transporte
   transportTypes: string[] = [
     'Tren Eléctrico',
     'Trolebús',
@@ -50,21 +51,43 @@ export class DashboardComponent {
   constructor(
     private dataService: DataService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit() {
-    this.loadStats();
+    this.resetStats(); // Reiniciar estadísticas
+    this.loadStats(); // Cargar estadísticas (no traerá datos porque transportType es 'none')
   }
 
   loadStats() {
+    // logs para ver los filtros enviados
+    console.log('Filtros enviados:', {
+      startYear: this.startYear,
+      endYear: this.endYear,
+      startMonth: this.startMonth,
+      endMonth: this.endMonth,
+      transportType: this.transportType
+    });
+
+    if (this.transportType === 'none') {
+      this.resetStats(); // Mantener las estadísticas en ceros
+      return;
+    }
+
+    // Limpiar estadísticas antes de cargar nuevas
+    this.resetStats(); // Reiniciar estadísticas
+
+    // Llamar al servicio para obtener estadísticas filtradas
     this.dataService.getStats(
       this.startYear,
       this.endYear,
       this.startMonth,
       this.endMonth,
-      this.transportType
-    ).subscribe({
-      next: (stats) => this.stats = stats,
+      this.transportType === '' ? undefined : this.transportType // Enviar undefined si es "Todos"
+      ).subscribe({
+      next: (stats) => {
+        console.log('Estadísticas recibidas:', stats);
+        this.stats = stats;
+      },
       error: (err) => console.error('Error cargando estadísticas', err)
     });
   }
@@ -87,10 +110,30 @@ export class DashboardComponent {
   }
 
   logout() {
-    this.authService.logout();
+
+    this.resetStats(); // Reiniciar estadísticas
+    this.authService.logout();// Cargar estadísticas
   }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen; // Alternar estado del menú
+  }
+
+  resetStats() {
+    console.log('Inicializando dashboard...');
+    this.stats = {
+      totalRevenue: 0,
+      totalPassengers: 0,
+      totalKilometers: 0,
+      totalServiceLength: 0,
+      totalUnits: 0,
+      totalLines: 0,
+      totalWeekdayBuses: 0,
+      totalWeekendBuses: 0,
+      totalPaidPassengers: 0,
+      totalCourtesyPassengers: 0,
+      totalDiscountedPassengers: 0,
+      totalRoutes: 0,
+    };
   }
 }

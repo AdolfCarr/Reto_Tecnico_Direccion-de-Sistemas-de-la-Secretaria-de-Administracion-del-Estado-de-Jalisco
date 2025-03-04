@@ -44,6 +44,10 @@ export class DataService {
           await this.metricTypeRepo.save(metricType);
         }
 
+        const value = parseFloat(item.Valor);
+        const finalValue = isNaN(value) ? 0.00 : value;
+
+        // Crear un nuevo registro de TransportData
         const newData = this.transportDataRepo.create({
           id: item._id,
           year: item.Anio,
@@ -52,7 +56,8 @@ export class DataService {
           metricType,
           entity: item.Entidad,
           municipality: item.Municipio,
-          value: item.Valor ?? 0.00,// Si es null/undefined, usa 0.00
+          //value: item.Valor ?? 0.00,// Si es null/undefined, usa 0.00
+          value: finalValue, // Usar el valor validado
           status: item.Estatus,
         });
 
@@ -142,45 +147,70 @@ export class DataService {
 
     // Calcular estadísticas
     data.forEach((item) => {
+
+      //const value = parseFloat(item.value); // Asegúrar de que el valor sea un número
+
+      // Logs para verificar los datos que se están sumando.
+      //console.log('Valor procesado:', item.value, 'Tipo:', typeof item.value);
+      //console.log('Valor convertido a número:', value);
+
+      //if (isNaN(value)) return; // Ignorar valores no numéricos
+
+      // Convertir item.value a número
+      const value = parseFloat(item.value.toString()); // o Number(item.value)
+
+      // Verificar si el valor es un número válido
+      if (isNaN(value)) {
+        console.warn(`Valor no numérico encontrado: ${item.value}`);
+        return; // Ignorar este registro
+      }
+
       switch (item.metricType.name) {
         case 'Ingresos por pasaje':
-          stats.totalRevenue += item.value;
+          stats.totalRevenue += value;
           break;
         case 'Pasajeros transportados':
-          stats.totalPassengers += item.value;
+          stats.totalPassengers += value;
           break;
         case 'Kilómetros recorridos':
-          stats.totalKilometers += item.value;
+          stats.totalKilometers += value;
           break;
         case 'Longitud de servicio':
-          stats.totalServiceLength += item.value;
+          stats.totalServiceLength += value;
           break;
         case 'Unidades en operación':
-          stats.totalUnits += item.value;
+          stats.totalUnits += value;
           break;
         case 'Lineas en servicio':
-          stats.totalLines += item.value;
+          stats.totalLines += value;
           break;
         case 'Autobuses en operación de lunes a viernes':
-          stats.totalWeekdayBuses += item.value;
+          stats.totalWeekdayBuses += value;
           break;
         case 'Autobuses en operación de sábado a domingo':
-          stats.totalWeekendBuses += item.value;
+          stats.totalWeekendBuses += value;
           break;
         case 'Pasajeros transportados con boleto pagado':
-          stats.totalPaidPassengers += item.value;
+          stats.totalPaidPassengers += value;
           break;
         case 'Pasajeros transportados con cortesía':
-          stats.totalCourtesyPassengers += item.value;
+          stats.totalCourtesyPassengers += value;
           break;
         case 'Pasajeros transportados con descuento':
-          stats.totalDiscountedPassengers += item.value;
+          stats.totalDiscountedPassengers += value;
           break;
         case 'Rutas':
-          stats.totalRoutes += item.value;
+          stats.totalRoutes += value;
           break;
       }
     });
+
+    //logs para ver los filtros recibidos y los datos obtenidos:
+    console.log('Filtros recibidos:', { startYear, endYear, startMonth, endMonth, transportType });
+    console.log('Datos obtenidos:', data);
+
+    //Para verificar que los filtros se apliquen correctamente en la consulta SQL:
+    console.log('Consulta SQL:', query.getQueryAndParameters());
 
     return stats;
   }

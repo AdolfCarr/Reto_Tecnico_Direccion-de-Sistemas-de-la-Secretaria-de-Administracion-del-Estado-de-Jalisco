@@ -36,7 +36,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
-    this.router.navigate(['/login']); // Redirige al login
+    this.router.navigate(['/login']);// Redirige al login
   }
 
   syncData() {
