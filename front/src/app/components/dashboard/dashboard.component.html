@@ -64,14 +64,35 @@
       }
     </div>
 
+    <!-- Toast message -->
+    <div class="toast-container">
+      <div class="toast" [class.show]="showToast">
+        {{ toastMessage }}
+        <button (click)="hideToast()">×</button>
+      </div>
+    </div>
+
     <!-- Filtros -->
     <div class="filters">
-      <input [(ngModel)]="startYear" placeholder="Año inicio" type="number">
-      <input [(ngModel)]="endYear" placeholder="Año fin" type="number">
-      <input [(ngModel)]="startMonth" placeholder="Mes inicio" type="number">
-      <input [(ngModel)]="endMonth" placeholder="Mes fin" type="number">
+      <div>
+        <input [(ngModel)]="startYear" placeholder="Año inicio" type="number" [min]="MIN_YEAR" [max]="MAX_YEAR"
+          [ngClass]="{ 'invalid-input': isStartYearInvalid }" (click)="resetInputError('startYear')" />
+      </div>
+      <div>
+        <input [(ngModel)]="endYear" placeholder="Año fin" type="number" [min]="MIN_YEAR" [max]="MAX_YEAR"
+          [ngClass]="{ 'invalid-input': isEndYearInvalid }" (click)="resetInputError('endYear')" />
+      </div>
+      <div>
+        <input [(ngModel)]="startMonth" placeholder="Mes inicio" type="number" [min]="MIN_MONTH" [max]="MAX_MONTH"
+          [ngClass]="{ 'invalid-input': isStartMonthInvalid }" (click)="resetInputError('startMonth')" />
+      </div>
+      <div>
+        <input [(ngModel)]="endMonth" placeholder="Mes fin" type="number" [min]="MIN_MONTH" [max]="MAX_MONTH"
+          [ngClass]="{ 'invalid-input': isEndMonthInvalid }" (click)="resetInputError('endMonth')" />
+      </div>
+
       <select [(ngModel)]="transportType">
-        <option value="">Todos</option>
+        <option value="" >Todos</option>
         <option *ngFor="let type of transportTypes" [value]="type">{{ type }}</option>
       </select>
       <button (click)="loadStats()" [disabled]="isSyncing">Aplicar Filtros</button>

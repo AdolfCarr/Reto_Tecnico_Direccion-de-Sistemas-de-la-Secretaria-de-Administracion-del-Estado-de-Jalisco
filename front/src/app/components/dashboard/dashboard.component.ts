@@ -50,10 +50,26 @@ export class DashboardComponent {
   isMenuOpen = false; // Estado del menú hamburguesa
   isLoading = false; // Estado de carga inicial
 
+  // Límites para los filtros
+  readonly MIN_YEAR = 1995;
+  readonly MAX_YEAR = new Date().getFullYear();
+  readonly MIN_MONTH = 1;
+  readonly MAX_MONTH = 12;
+
+  // Estado de errores
+  isStartYearInvalid = false;
+  isEndYearInvalid = false;
+  isStartMonthInvalid = false;
+  isEndMonthInvalid = false;
+
+  // Toast message
+  showToast = false;
+  toastMessage = '';
+
   constructor(
     private dataService: DataService,
     private authService: AuthService
-  ) { 
+  ) {
     // Recuperar la última fecha de sincronización del localStorage al inicializar el componente
     this.lastSyncTime = localStorage.getItem('lastSyncTime');
   }
@@ -100,6 +116,42 @@ export class DashboardComponent {
     // Limpiar estadísticas antes de cargar nuevas
     this.resetStats(); // Reiniciar estadísticas
 
+    // Validar los filtros antes de aplicarlos
+    this.isStartYearInvalid = this.startYear !== undefined && (this.startYear < this.MIN_YEAR || this.startYear > this.MAX_YEAR);
+    this.isEndYearInvalid = this.endYear !== undefined && (this.endYear < this.MIN_YEAR || this.endYear > this.MAX_YEAR);
+    this.isStartMonthInvalid = this.startMonth !== undefined && (this.startMonth < this.MIN_MONTH || this.startMonth > this.MAX_MONTH);
+    this.isEndMonthInvalid = this.endMonth !== undefined && (this.endMonth < this.MIN_MONTH || this.endMonth > this.MAX_MONTH);
+
+    if (this.isStartYearInvalid) {
+      this.showError(`El año de inicio debe estar entre ${this.MIN_YEAR} y ${this.MAX_YEAR}.`);
+      return;
+    }
+
+    if (this.isEndYearInvalid) {
+      this.showError(`El año de fin debe estar entre ${this.MIN_YEAR} y ${this.MAX_YEAR}.`);
+      return;
+    }
+
+    if (this.isStartMonthInvalid) {
+      this.showError(`El mes de inicio debe estar entre ${this.MIN_MONTH} y ${this.MAX_MONTH}.`);
+      return;
+    }
+
+    if (this.isEndMonthInvalid) {
+      this.showError(`El mes de fin debe estar entre ${this.MIN_MONTH} y ${this.MAX_MONTH}.`);
+      return;
+    }
+
+    if (this.startYear && this.endYear && this.startYear > this.endYear) {
+      this.showError('El año de inicio debe ser menor que el año de fin.');
+      return;
+    }
+
+    if (this.startYear === this.endYear && this.startMonth && this.endMonth && this.startMonth >= this.endMonth) {
+      this.showError('Cuando el año de inicio y fin son iguales, el mes de inicio debe ser menor que el mes de fin.');
+      return;
+    }
+
     // Llamar al servicio para obtener estadísticas filtradas
     this.dataService.getStats(
       this.startYear,
@@ -107,7 +159,7 @@ export class DashboardComponent {
       this.startMonth,
       this.endMonth,
       this.transportType === '' ? undefined : this.transportType // Enviar undefined si es "Todos"
-      ).subscribe({
+    ).subscribe({
       next: (stats) => {
         console.log('Estadísticas recibidas:', stats);
         this.stats = stats;
@@ -161,5 +213,27 @@ export class DashboardComponent {
       totalDiscountedPassengers: 0,
       totalRoutes: 0,
     };
+  }
+
+  // Método para mostrar el toast
+  showError(message: string): void {
+    this.toastMessage = message;
+    this.showToast = true;
+
+    // Ocultar el toast después de 5 segundos
+    setTimeout(() => {
+      this.hideToast();
+    }, 5000);
+  }
+
+  // Método para ocultar el toast
+  hideToast(): void {
+    this.showToast = false;
+  }
+
+  // Método para restablecer el estado de error al hacer clic en el input
+  resetInputError(input: 'startYear' | 'endYear' | 'startMonth' | 'endMonth'): void {
+    const property = `is${input[0].toUpperCase() + input.slice(1)}Invalid` as keyof DashboardComponent;
+    (this[property] as boolean) = false;
   }
 }

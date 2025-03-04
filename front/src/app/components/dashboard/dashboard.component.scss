@@ -202,8 +202,10 @@
     }
 
     &[disabled] {
-      opacity: 0.7;/* Reducir opacidad cuando está deshabilitado */
-      cursor: not-allowed;/* Cambiar el cursor a "no permitido" */
+      opacity: 0.7;
+      /* Reducir opacidad cuando está deshabilitado */
+      cursor: not-allowed;
+      /* Cambiar el cursor a "no permitido" */
 
       &:hover {
         background: #3f51b5;
@@ -287,7 +289,7 @@
     margin-top: 10px;
     color: #3f51b5;
   }
-  
+
   .last-sync-time {
     margin-top: 10px;
     font-size: 0.875rem;
@@ -332,4 +334,41 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Toast message */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.toast {
+  background-color: #ff4444; // Fondo rojo
+  color: white; // Texto blanco
+  padding: 10px 20px;
+  border-radius: 4px;
+  display: none; // Ocultar por defecto
+  align-items: center;
+  justify-content: space-between;
+
+  &.show {
+    display: flex; // Mostrar cuando tenga la clase "show"
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+}
+
+/* Inputs inválidos */
+.invalid-input {
+  border: 2px solid red; // Borde rojo
+  background-color: #ffe6e6; // Fondo rojo claro
 }
