@@ -1,0 +1,68 @@
+@use 'sass:color';
+
+.form-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    &:focus {
+      border-color: #3f51b5;
+      outline: none;
+    }
+  }
+  
+  .form-button {
+    width: 100%;
+    padding: 0.75rem;
+    background: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    &:hover {
+      background: color.adjust(#3f51b5, $lightness: -10%);
+    }
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  }
+  
+  .error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  
+  .links-container {
+    text-align: center;
+    margin-top: 1rem;
+    a {
+      color: #3f51b5;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }

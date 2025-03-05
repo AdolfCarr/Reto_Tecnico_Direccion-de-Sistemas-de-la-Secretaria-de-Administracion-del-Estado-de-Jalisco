@@ -241,7 +241,7 @@ docker-compose down -v && docker-compose up --build
 > [!CAUTION]
 > *The last instructions are for the branch 'backend' on its **commit 231da5f299abfaf095955e050cd215a9ae98abd4**
 
-## Test the final version of the Endpoint on `commit blablabla`
+## Test the final version of the Endpoint on ` commit bd730420fbcf85cf51aebc9e7d0709b1b4240d8d (origin/backend, backend)`
 
 >[!INFORMATION]
 After applying JWT Authantication, the Login and Logout features follow the next instructions to test the endpoints, and database.
@@ -258,6 +258,17 @@ curl -X POST http://localhost:4000/users/register \
 # for windows cmd
 curl -X POST http://localhost:4000/users/register -H "Content-Type: application/json" -d "{\"username\": \"testuser\", \"password\": \"testpassword\"}"
 ```
+
+Prueba el registro con formato JSON correcto (evita problemas de comillas en Windows):
+
+```bash
+
+bash
+Copy
+curl -X POST http://localhost:4000/users/register ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\": \"testuser2\", \"password\": \"Testpass123!\"}"
+  ```
 
 Example Response:
 

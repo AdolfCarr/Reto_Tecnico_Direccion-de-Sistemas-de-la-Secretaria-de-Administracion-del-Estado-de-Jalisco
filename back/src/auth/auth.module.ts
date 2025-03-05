@@ -7,6 +7,12 @@ import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DataService } from '../data/data.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TransportData } from '../entities/transport-data.entity';
+import { TransportType } from '../entities/transport-type.entity';
+import { MetricType } from '../entities/metric-type.entity';
+import { HttpModule } from '@nestjs/axios'; 
 
 @Module({
   imports: [
@@ -16,12 +22,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '60m' },
+        signOptions: { expiresIn: '5m' },
       }),
       inject: [ConfigService],
     }),
+    TypeOrmModule.forFeature([TransportData, TransportType, MetricType]),
+    HttpModule,
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, DataService],
   controllers: [AuthController],
   exports: [AuthService],
 })

@@ -14,7 +14,7 @@ services:
     networks:
       - transporte-net
 
-  back:
+  backend:
     build: ./back
     container_name: transporte-back
     env_file: .env
@@ -28,6 +28,15 @@ services:
       - "4000:4000"
     depends_on:
       - postgres
+    networks:
+      - transporte-net
+
+  frontend:
+    build: ./front
+    container_name: transporte-front
+    ports:
+      - "80:80"
+    restart: unless-stopped
     networks:
       - transporte-net
 

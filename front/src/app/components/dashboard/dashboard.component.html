@@ -1,0 +1,156 @@
+<div class="dashboard">
+  <!-- Spinner de carga inicial -->
+  @if (isLoading) {
+  <div class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Cargando datos...</p>
+  </div>
+  }
+
+  <!-- Menú lateral -->
+  <div class="side-menu" [class.open]="isMenuOpen">
+    <div class="menu-header">
+      <!-- <h3>Menú</h3>-->
+      <!-- Ícono personalizado a la derecha -->
+      <img src="assets\IIEG_Jalisco_2025.svg" alt="Ícono" class="menu-icon">
+      <div class="close-icon" (click)="toggleMenu()">×</div>
+    </div>
+    <!-- Línea de separación -->
+    <div class="separator"></div>
+
+    <!-- Botón "Cerrar Sesión" en la parte inferior -->
+    <div class="logout-section">
+      <button class="logout-button" (click)="logout()">
+        <!--<span class="logout-icon">🚪</span>  Ícono de logout -->
+        <span class="logout-text">Cerrar Sesión</span>
+      </button>
+    </div>
+
+    <!--<a class="menu-item" (click)="logout()">Cerrar Sesión</a>-->
+  </div>
+
+  <!-- Overlay para cerrar el menú -->
+  <div class="overlay" [class.open]="isMenuOpen" (click)="toggleMenu()"></div>
+
+  <!-- Barra superior -->
+  <div class="top-bar">
+    <!-- Menú hamburguesa -->
+    <div class="hamburger-menu" (click)="toggleMenu()">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+
+    <!-- Título del dashboard -->
+    <h1>Dashboard</h1>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="content" [class.menu-open]="isMenuOpen">
+    <!-- Sincronización de datos -->
+    <div class="sync-section">
+      <button (click)="syncData()" [disabled]="isSyncing">
+        @if (isSyncing) {
+        <span class="spinner"></span> <!-- Spinner -->
+        } @else {
+        <span>Sincronizar Datos</span>
+        }
+      </button>
+      @if (syncMessage) {
+      <div class="sync-message">{{ syncMessage }}</div>
+      }
+      @if (lastSyncTime) {
+      <div class="last-sync-time">Última sincronización: {{ lastSyncTime }}</div>
+      }
+    </div>
+
+    <!-- Toast message -->
+    <div class="toast-container">
+      <div class="toast" [class.show]="showToast">
+        {{ toastMessage }}
+        <button (click)="hideToast()">×</button>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters">
+      <div>
+        <input [(ngModel)]="startYear" placeholder="Año inicio" type="number" [min]="MIN_YEAR" [max]="MAX_YEAR"
+          [ngClass]="{ 'invalid-input': isStartYearInvalid }" (click)="resetInputError('startYear')" />
+      </div>
+      <div>
+        <input [(ngModel)]="endYear" placeholder="Año fin" type="number" [min]="MIN_YEAR" [max]="MAX_YEAR"
+          [ngClass]="{ 'invalid-input': isEndYearInvalid }" (click)="resetInputError('endYear')" />
+      </div>
+      <div>
+        <input [(ngModel)]="startMonth" placeholder="Mes inicio" type="number" [min]="MIN_MONTH" [max]="MAX_MONTH"
+          [ngClass]="{ 'invalid-input': isStartMonthInvalid }" (click)="resetInputError('startMonth')" />
+      </div>
+      <div>
+        <input [(ngModel)]="endMonth" placeholder="Mes fin" type="number" [min]="MIN_MONTH" [max]="MAX_MONTH"
+          [ngClass]="{ 'invalid-input': isEndMonthInvalid }" (click)="resetInputError('endMonth')" />
+      </div>
+
+      <select [(ngModel)]="transportType">
+        <option value="" >Todos</option>
+        <option *ngFor="let type of transportTypes" [value]="type">{{ type }}</option>
+      </select>
+      <button (click)="loadStats()" [disabled]="isSyncing">Aplicar Filtros</button>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="stats">
+      <!-- Métricas principales -->
+      <div class="stat-card">
+        <h3>Ingresos por Pasaje</h3>
+        <p>{{ stats.totalRevenue | currency }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Pasajeros Transportados</h3>
+        <p>{{ stats.totalPassengers }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Kilómetros Recorridos</h3>
+        <p>{{ stats.totalKilometers }} km</p>
+      </div>
+      <div class="stat-card">
+        <h3>Longitud del Servicio</h3>
+        <p>{{ stats.totalServiceLength }} km</p>
+      </div>
+      <div class="stat-card">
+        <h3>Unidades en Operación</h3>
+        <p>{{ stats.totalUnits }}</p>
+      </div>
+
+      <!-- Nuevas métricas -->
+      <div class="stat-card">
+        <h3>Líneas en Servicio</h3>
+        <p>{{ stats.totalLines }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Autobuses (L-V)</h3>
+        <p>{{ stats.totalWeekdayBuses }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Autobuses (S-D)</h3>
+        <p>{{ stats.totalWeekendBuses }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Pasajeros (Boleto Pagado)</h3>
+        <p>{{ stats.totalPaidPassengers }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Pasajeros (Cortesía)</h3>
+        <p>{{ stats.totalCourtesyPassengers }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Pasajeros (Descuento)</h3>
+        <p>{{ stats.totalDiscountedPassengers }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Rutas</h3>
+        <p>{{ stats.totalRoutes }}</p>
+      </div>
+    </div>
+  </div>
+</div>
