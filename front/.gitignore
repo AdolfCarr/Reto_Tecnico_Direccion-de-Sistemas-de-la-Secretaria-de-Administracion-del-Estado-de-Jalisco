@@ -40,3 +40,10 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Angular compiler cache files
+angular-compiler.db-lock
+angular-compiler.db
+
+# TypeScript build info
+.tsbuildinfo

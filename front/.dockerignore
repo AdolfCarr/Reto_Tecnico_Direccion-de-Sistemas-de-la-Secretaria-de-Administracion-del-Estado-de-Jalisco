@@ -3,3 +3,10 @@ dist/
 .git/
 Dockerfile
 .dockerignore
+
+# Angular compiler cache files
+angular-compiler.db-lock
+angular-compiler.db
+
+# TypeScript build info
+.tsbuildinfo
