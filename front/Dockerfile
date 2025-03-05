@@ -1,5 +1,5 @@
 # Usar una imagen base ligera con Node.js
-FROM node:20-alpine as builder
+FROM node:20-alpine AS builder
 
 # Configurar el directorio de trabajo
 WORKDIR /app
