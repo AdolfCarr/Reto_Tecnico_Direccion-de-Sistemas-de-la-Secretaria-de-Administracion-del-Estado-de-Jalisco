@@ -22,7 +22,7 @@ import { HttpModule } from '@nestjs/axios';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '60m' },
+        signOptions: { expiresIn: '5m' },
       }),
       inject: [ConfigService],
     }),

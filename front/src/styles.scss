@@ -15,10 +15,12 @@ body {
     font-family: 'Roboto', sans-serif;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
-    justify-content: center; /* Centrado vertical */
-    align-items: center;     /* Centrado horizontal */
+    justify-content: center;
+    /* Centrado vertical */
+    align-items: center;
+    /* Centrado horizontal */
     overflow: auto;
-    
+
 }
 
 // Clases reutilizables
@@ -35,7 +37,8 @@ body {
     flex-direction: column;
     align-items: center; // Centra horizontalmente los elementos hijos
     //max-height: 95vh; /* 95% del viewport height */
-    overflow-y: auto; /* Scroll interno solo si contenido excede altura */
+    overflow-y: auto;
+    /* Scroll interno solo si contenido excede altura */
 }
 
 form {
@@ -44,7 +47,7 @@ form {
 
 .form-group {
     width: 100%; // Los grupos ocupan todo el ancho
-  }
+}
 
 .form-title {
     text-align: center;
@@ -131,26 +134,54 @@ form {
 
 @keyframes slideIn {
     from {
-      opacity: 0;
-      transform: translateY(20px);
+        opacity: 0;
+        transform: translateY(20px);
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 
-  html {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+html {
     height: 100%;
-    overflow: hidden; /* Elimina scroll global */
-  }
-  
-  .page-container {
+    overflow: hidden;
+    /* Elimina scroll global */
+}
+
+.page-container {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+router-outlet {
+    flex: 1;
+}
+
+/* Centrar el toast */
+.toast-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: fixed;
+    width: auto;
+    max-width: 90%;
+    text-align: center;
   }
   
-  router-outlet {
-    flex: 1;
+  /* Estilos adicionales para mejorar la apariencia */
+  .toast-center .toast-message {
+    font-size: 16px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    background-color: #ff4444;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .toast-center .toast-title {
+    font-weight: bold;
+    margin-bottom: 10px;
   }

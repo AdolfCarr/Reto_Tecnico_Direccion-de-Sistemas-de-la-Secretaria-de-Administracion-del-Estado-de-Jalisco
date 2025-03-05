@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DataService } from '../../services/data.service';
 import { AuthService } from '../../services/auth.service';
 import { Stats } from '../../interfaces/stats.interface';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   standalone: true,
@@ -68,7 +69,8 @@ export class DashboardComponent {
 
   constructor(
     private dataService: DataService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {
     // Recuperar la última fecha de sincronización del localStorage al inicializar el componente
     this.lastSyncTime = localStorage.getItem('lastSyncTime');
@@ -164,7 +166,21 @@ export class DashboardComponent {
         console.log('Estadísticas recibidas:', stats);
         this.stats = stats;
       },
-      error: (err) => console.error('Error cargando estadísticas', err)
+      error: (err) => {
+        console.error('Error cargando estadísticas', err);
+        if (err.status === 401) { // Si el error es 401 (Unauthorized)
+          console.error('Error session expired!!', err);
+          this.toastr.error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.', 'Error', {
+            timeOut: 5000, // Duración del toast
+            positionClass: 'toast-top-right', // Posición del toast
+          }).onHidden.subscribe(() => {
+            // Redirigir al login después de que el toast se haya ocultado
+            this.authService.logout(true); // Redirigir inmediatamente, cerrar sesión
+          });
+        } else {
+          this.toastr.error('Ocurrió un error al cargar las estadísticas.', 'Error');
+        }
+      }
     });
   }
 

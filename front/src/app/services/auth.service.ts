@@ -34,9 +34,11 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  logout() {
+  logout(redirectImmediately: boolean = true) {
     localStorage.removeItem('token');
-    this.router.navigate(['/login']);// Redirige al login
+    if (redirectImmediately) {
+      this.router.navigate(['/login']);// Redirige al login
+    }
   }
 
   syncData() {
@@ -46,5 +48,5 @@ export class AuthService {
   isDatabaseEmpty() {
     return this.http.get<{ isEmpty: boolean }>(`${this.apiUrl}/data/is-empty`);
   }
-  
+
 }
