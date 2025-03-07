@@ -55,7 +55,7 @@ The project is **dockerized**, so clone it and run the following command inside 
    ```bash
    git clone https://github.com/AdolfCarr/Reto_Tecnico_Direccion-de-Sistemas-de-la-Secretaria-de-Administracion-del-Estado-de-Jalisco.git
    cd transporte-stats
-   ``
+   ```
 
 2. **Run the system with Docker**
 
