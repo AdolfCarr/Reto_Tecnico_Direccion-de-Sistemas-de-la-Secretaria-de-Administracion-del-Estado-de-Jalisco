@@ -22,20 +22,20 @@ A **Angular** frontend for interacting with transport statistics data from the *
 
 ## Ejecucion local (from `commit 1423a7a3442795a2e53e51eaee8f1186ce0c9bc2`)
 
-1. Ejecutar el backend con Docker.
+1. Run the backend with Docker
 
-   Desde el directorio raíz del proyecto backend (donde está el docker-compose.yml)
+From the backend project's root directory (where docker-compose.yml is located):
 
 ```bash
 docker-compose up --build
 ```
-Verifica que ambos servicios estén corriendo:
+Verify that both services are running:
 
 ```bash
 docker ps
 ```
 
-Debes ver 2 contenedores activos:
+You should see two active containers:
 
 - transporte-db (PostgreSQL)
 - transporte-back (Backend NestJS)
@@ -46,9 +46,9 @@ Debes ver 2 contenedores activos:
  Up 5 hours             transporte-back
  ```
 
-2. Verificar su funcionamiento.
+2. Verify functionality
 
-Prueba el registro con formato JSON correcto (evita problemas de comillas en Windows):
+Test user registration with a correctly formatted JSON request (avoiding quotation issues in Windows):
 
 ```bash
 curl -X POST http://localhost:4000/users/register ^
@@ -192,12 +192,12 @@ Conéctate a la base de datos:
 ```bash
 docker exec -it transporte-db psql -U transporte_user -d transporte_db
 ```
-Verifica la tabla de usuarios:
+Verify the users table:
 
 ```sql
 SELECT * FROM "user";
 ```
-Verificar usuario de prueba registrado:
+Check if the test user is registered:
 
 ```sql
 SELECT FROM "user" WHERE username = 'testuser';
@@ -208,27 +208,29 @@ SELECT FROM "user" WHERE username = 'testuser';
 If the backend works as spected, then continue to the local build up of the Angular server.
 
 1. **Verifica tu versión de Angular**
-Este frontend Angular fue desarrollado en Angular CLI: 19.2.0, asi que probablemente una version anterior no funcione como se prevee.
+This frontend was developed with Angular CLI: 19.2.0. Older versions might not work properly.
 
 ```bash
 ng version
 ```
 
-Para ejecutar el proyecto:
-
-Asegúrate que el backend esté corriendo en http://localhost:4000
-
 2. **Ejecuta el frontend**
+
+Ensure the backend is running at http://localhost:4000, then:
 
 ```bash
 ng serve
 ```
 
-3. **http://localhost:4200/**
+3. **Access the Application**
 
-Ingresa en el browser `http://localhost:4200/`
+Open a browser and go to:
 
-Registra un nuevo usuario o ingresa con el creado previamente con el comnado `curl` desde `cmd`.
+```html
+http://localhost:4200/
+```
+
+Register a new user or log in with the previously created test user.
 
 ## 🚀 Deployment with Docker(from `commit 246dcfec34b641fa30e39791f6973fae4b412ca4`)
 
@@ -262,8 +264,9 @@ Build and start containers:
 ```bash
 # Remove old containers and volumes
 docker-compose down -v
-# Recrea los contenedores
+# Rebuild containers
 docker-compose build --no-cache
+# Start the system
 docker-compose up
 ```
 
@@ -304,7 +307,7 @@ Already configured via:
 @Cron('0 3 * * *') // In data-sync.task.ts
 ```
 
-### Verification Final Steps
+### Final Verification  Steps
 
 1. **Test App on the browser**
 
@@ -380,89 +383,90 @@ SELECT * FROM "user" WHERE username = 'testuser';
 ### Frontend Workflow
 #### Registration:
 
-1. El usuario ingresa sus datos en el formulario de registro:
+1. The user enters their details in the registration form:
 
-   - El usuario proporciona información como nombre de usuario, contraseña, y cualquier otro dato requerido (por ejemplo, correo electrónico).
+   - The user provides information such as username, password, and any other required data (e.g., email).
 
-2. El frontend envía los datos al backend:
+2. The frontend sends the data to the backend:
 
-   - El formulario de registro llama al método register() del servicio AuthService.
+   - The registration form calls the register() method of the AuthService.
 
-   - Se realiza una solicitud HTTP POST al endpoint /users/register del backend.
+   - An HTTP POST request is sent to the /users/register endpoint of the backend.
 
-3. El backend procesa la solicitud de registro:
+3. The backend processes the registration request:
 
-   - El backend recibe los datos del usuario.
+   - The backend receives the user's data.
 
-   - Valida que los datos sean correctos (por ejemplo, que el nombre de usuario no esté en uso).
+   - It validates that the data is correct (e.g., checks if the username is already in use).
 
-   - Hashea la contraseña usando un algoritmo seguro (por ejemplo, bcrypt).
+   - It hashes the password using a secure algorithm (e.g., bcrypt).
 
-4. El backend almacena el usuario en la base de datos PostgreSQL:
+4. The backend stores the user in the PostgreSQL database:
 
-   - El backend ejecuta una consulta SQL para insertar el nuevo usuario en la tabla users de la base de datos PostgreSQL.
+   - The backend executes an SQL query to insert the new user into the users table of the PostgreSQL database.
 
-   - La contraseña se almacena en forma de hash, no en texto plano.
+   - The password is stored as a hash, not in plain text.
 
-5. El backend responde al frontend:
+5. The backend responds to the frontend:
 
-   - Si el registro es exitoso, el backend devuelve una respuesta de éxito (por ejemplo, un mensaje o un código de estado 201).
+   - If the registration is successful, the backend returns a success response (e.g., a message or a 201 status code).
 
-   - Si hay un error (por ejemplo, el nombre de usuario ya existe), el backend devuelve un mensaje de error.
+   - If there is an error (e.g., the username already exists), the backend returns an error message.
 
-6. El frontend maneja la respuesta:
+6. The frontend handles the response:
 
-   - Si el registro es exitoso, el frontend redirige al usuario a la página de login.
+   - If the registration is successful, the frontend redirects the user to the login page.
 
-   - Si hay un error, el frontend muestra un mensaje de error al usuario.
+   - If there is an error, the frontend displays an error message to the user.
 
 #### Login:
 
-1. El usuario ingresa sus credenciales:
+1. The user enters their credentials:
 
-   - El usuario escribe su nombre de usuario y contraseña en el formulario de login.
+   - The user types their username and password into the login form.
 
-2. El frontend envía las credenciales al backend:
+2. The frontend sends the credentials to the backend:
 
-   - El formulario de login llama al método login() del servicio AuthService.
+   - The login form calls the login() method of the AuthService.
 
-   - Se realiza una solicitud HTTP POST al endpoint /auth/login del backend.
+   - An HTTP POST request is sent to the /auth/login endpoint of the backend.
 
-3. El backend valida las credenciales:
+3. The backend validates the credentials:
 
-   - El backend verifica si el usuario existe y si la contraseña es correcta.
+   - The backend checks if the user exists and if the password is correct.
 
-   - Si las credenciales son válidas, el backend genera un token JWT (JSON Web Token) y lo devuelve al frontend.
+   - If the credentials are valid, the backend generates a JWT (JSON Web Token) and returns it to the frontend.
 
-4. El frontend almacena el token:
+4. The frontend stores the token:
 
-   - El frontend recibe el token y lo guarda en el localStorage o sessionStorage.
+   - The frontend receives the token and saves it in localStorage or sessionStorage.
 
-   - El token se usa para autenticar solicitudes futuras al backend.
+   - The token is used to authenticate future requests to the backend.
 
-5. El frontend redirige al usuario al dashboard:
-
-   - Después de un login exitoso, el usuario es redirigido a la página de dashboard (o cualquier otra ruta protegida).
+5. The frontend redirects the user to the dashboard:
+   - After a successful login, the user is redirected to the dashboard page (or any other protected route).
 
 #### Logout:
-1. El usuario hace clic en el botón de logout:
 
-   - El botón de logout llama al método logout() del servicio AuthService.
+1. The user clicks the logout button:
 
-2. El frontend elimina el token:
+   - The logout button calls the logout() method of the AuthService.
 
-   - El token se elimina del localStorage o sessionStorage.
+2. The frontend deletes the token:
 
-3. El frontend redirige al usuario a la página de login:
+   - The token is removed from localStorage or sessionStorage.
 
-   - Después de eliminar el token, el usuario es redirigido a la página de login.
+3. The frontend redirects the user to the login page:
 
-4. El backend invalida el token (opcional):
+   - After deleting the token, the user is redirected to the login page.
 
-   - Si el backend tiene un sistema de invalidación de tokens, el frontend puede enviar una solicitud para invalidar el token actual.
+4. The backend invalidates the token (optional):
+
+   - If the backend has a token invalidation system, the frontend can send a request to invalidate the current token.
 
 **Final Thoughts**
-- The user only needs to enter their plain text password during login.
+
+- The user only needs to enter their plain-text password during login.
 
 - The system handles password hashing and comparison automatically.
 
