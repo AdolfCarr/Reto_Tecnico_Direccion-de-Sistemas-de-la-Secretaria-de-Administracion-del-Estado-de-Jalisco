@@ -1,22 +1,22 @@
 <p align="center">
   <a href="http://nestjs.com/" target="blank">
-    <img src="https://nestjs.com/img/logo-small.svg" width="60" alt="NestJS Logo" />
+    <img src="https://nestjs.com/img/logo-small.svg" width="100" alt="NestJS Logo" />
   </a>
   &nbsp;&nbsp;&nbsp;
   <a href="https://www.postgresql.org/" target="blank">
-    <img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="60" alt="PostgreSQL Logo" />
+    <img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="100" alt="PostgreSQL Logo" />
   </a>
   &nbsp;&nbsp;&nbsp;
   <a href="https://typeorm.io/" target="blank">
-    <img src="https://avatars.githubusercontent.com/u/20165699?s=200&v=4" width="60" alt="TypeORM Logo" />
+    <img src="https://avatars.githubusercontent.com/u/20165699?s=200&v=4" width="100" alt="TypeORM Logo" />
   </a>
   &nbsp;&nbsp;&nbsp;
   <a href="https://www.docker.com/" target="blank">
-    <img src="https://raw.githubusercontent.com/docker-library/docs/master/docker/logo.png" width="60" alt="Docker Logo" />
+    <img src="https://raw.githubusercontent.com/docker-library/docs/master/docker/logo.png" width="100" alt="Docker Logo" />
   </a>
   &nbsp;&nbsp;&nbsp;
   <a href="https://docs.docker.com/compose/" target="blank">
-    <img src="https://raw.githubusercontent.com/docker/compose/master/logo.png" width="60" alt="Docker Compose Logo" />
+    <img src="https://raw.githubusercontent.com/docker/compose/master/logo.png" width="100" alt="Docker Compose Logo" />
   </a>
 </p>
 

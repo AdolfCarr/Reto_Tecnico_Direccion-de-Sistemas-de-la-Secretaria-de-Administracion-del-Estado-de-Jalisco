@@ -14,225 +14,25 @@
   <a href="https://docs.docker.com/compose/" target="blank">
     <img src="https://raw.githubusercontent.com/docker/compose/master/logo.png" width="100" alt="Docker Compose Logo" />
   </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="http://nestjs.com/" target="blank">
+    <img src="https://nestjs.com/img/logo-small.svg" width="100" alt="NestJS Logo" />
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://www.postgresql.org/" target="blank">
+    <img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="100" alt="PostgreSQL Logo" />
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://typeorm.io/" target="blank">
+    <img src="https://avatars.githubusercontent.com/u/20165699?s=200&v=4" width="100" alt="TypeORM Logo" />
+  </a>
 </p>
 
-# Frontend for IIEG Transport Statistics (Dockerized)
+# IIEG(Instituto de Información Estadística y Geográfica de Jalisco) Transport Statistics (Dockerized)
 
-A **Angular** frontend for interacting with transport statistics data from the **IIEG API**, stored in **PostgreSQL**.
+A **Web App** for interacting with transport statistics data from the **IIEG API**.
 
-## Ejecucion local (from `commit 1423a7a3442795a2e53e51eaee8f1186ce0c9bc2`)
-
-1. Run the backend with Docker
-
-From the backend project's root directory (where docker-compose.yml is located):
-
-```bash
-docker-compose up --build
-```
-Verify that both services are running:
-
-```bash
-docker ps
-```
-
-You should see two active containers:
-
-- transporte-db (PostgreSQL)
-- transporte-back (Backend NestJS)
-
-```bash
- STATUS                 NAMES
- Up 5 hours             transporte-db  
- Up 5 hours             transporte-back
- ```
-
-2. Verify functionality
-
-Test user registration with a correctly formatted JSON request (avoiding quotation issues in Windows):
-
-```bash
-curl -X POST http://localhost:4000/users/register ^
-  -H "Content-Type: application/json" ^
-  -d "{\"username\": \"testuser\", \"password\": \"Testpassword!\"}"
-```
-
-Example Response:
-
-```json
-{"id":12,
-"username":"testuser","password":"$2b$10$TEHYYBrN7b2UcoIXcEwLbe3ZeWX7n0gWKMTSt8xIK7Z9SSIiHA2y"}
-```
-
-3. **Log In to Get a JWT Token**
-
-Now that the user is registered, you can log in to get a JWT token.
-
-Login Command:
-```bash
-# for windows cmd
-curl -X POST http://localhost:4000/auth/login -H "Content-Type: application/json" -d "{\"username\": \"testuser\", \"password\": \"testpassword\"}"
-```
-
-Example Response:
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
-Copy the access_token value. You’ll use it in the next step.
-
-4. **Call the Protected Endpoint**
-Use the access_token to call the protected GET /data endpoint.
-
-Example Command:
-
-```bash
-# for windows cmd
-curl -X GET "http://localhost:4000/data?startYear=2020" -H "Authorization: Bearer <your_access_token>"
-```
-
-Replace <your_access_token> with the token you obtained in Step 2.
-
-Possible expected data structure:
-
-```json
-[
-  {
-    "id": "665e1214eb09d28a75840855",
-    "year": 2020,
-    "month": 1,
-    "transportType": {
-      "id": 1,
-      "name": "Tren Eléctrico"
-    },
-    "metricType": {
-      "id": 1,
-      "name": "Ingresos por pasaje"
-    },
-    "entity": "Jalisco",
-    "municipality": "Guadalajara",
-    "value": "45270437.00",
-    "status": "Cifras Definitivas"
-  },
-  {
-    "id": "665e1214eb09d28a75840856",
-    "year": 2020,
-    "month": 1,
-    "transportType": {
-      "id": 1,
-      "name": "Tren Eléctrico"
-    },
-    "metricType": {
-      "id": 2,
-      "name": "Kilómetros recorridos"
-    },
-    "entity": "Jalisco",
-    "municipality": "Guadalajara",
-    "value": "508340.00",
-    "status": "Cifras Definitivas"
-  }
-]
-
-```
-
-> [!WARNING]
-> JWT tokens are time-limited and will expire after a certain 
-> period. This is a security feature to ensure that tokens are 
-> not valid indefinitely. When a token expires, you will need 
-> to log in again to obtain a new token.
-
-5. **If recieving an empty Json sync data**
-
-```bash
-# recieved an empty Json
-[]
-```
-Database is empty or doesn’t have the required data, sync the data from the external API.
-
-You should get a JWT token before executing the `curl -X POST http://localhost:4000/data/sync` command because the /data/sync endpoint is protected by the AuthGuard('jwt'). This is because the AuthGuard('jwt') ensures that only authenticated users (with a valid JWT token) can access the endpoint.
-
-Use the JWT token to access the /data/sync endpoint.
-
-```bash
-curl -X POST http://localhost:4000/data/sync -H "Authorization: Bearer <your_access_token>"
-```
-Replace ``<your_access_token>`` with the token you obtained from the login response.
-
-Expected Response:
-```json
-{
-  "message": "Data synchronization completed"
-}
-```
-
-After syncing, check the database again to ensure the data has been populated, conside that you need to be authenticated.
-
-6. **If last steps succesful then the backend is fully working.**
-
-Common solutions:
-
-```bash
-# Removes all unused Docker objects to free up disk space
-docker system prune -a --volumes
-
-# Remove old containers and volumes
-docker-compose down -v
-
-# Borra y recrea los contenedores
-docker-compose build --no-cache
-docker-compose up
-
-# Construir y levantar
-docker-compose down -v && docker-compose up --build
-```
-
-Conéctate a la base de datos:
-
-```bash
-docker exec -it transporte-db psql -U transporte_user -d transporte_db
-```
-Verify the users table:
-
-```sql
-SELECT * FROM "user";
-```
-Check if the test user is registered:
-
-```sql
-SELECT FROM "user" WHERE username = 'testuser';
-```
-
-## Build up the Angular server
-
-If the backend works as spected, then continue to the local build up of the Angular server.
-
-1. **Verifica tu versión de Angular**
-This frontend was developed with Angular CLI: 19.2.0. Older versions might not work properly.
-
-```bash
-ng version
-```
-
-2. **Ejecuta el frontend**
-
-Ensure the backend is running at http://localhost:4000, then:
-
-```bash
-ng serve
-```
-
-3. **Access the Application**
-
-Open a browser and go to:
-
-```html
-http://localhost:4200/
-```
-
-Register a new user or log in with the previously created test user.
-
-## 🚀 Deployment with Docker(from `commit 246dcfec34b641fa30e39791f6973fae4b412ca4`)
+## 🚀 Deployment with Docker-Compose
 
 ### Prerequisites
 
